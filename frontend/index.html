@@ -1,1368 +1,838 @@
 
-html_content = '''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sentinel AI — Text Detection Intelligence</title>
-    <meta name="description" content="Professional AI text detection SaaS platform. Detect synthetic content with precision.">
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Three.js -->
+    <title>VOID — AI Text Detector</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
     <style>
         :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #111118;
-            --bg-tertiary: #16161f;
-            --bg-card: #13131a;
-            --bg-hover: #1a1a25;
-            --text-primary: #f0f0f5;
-            --text-secondary: #8a8a9a;
-            --text-tertiary: #5a5a6a;
-            --accent: #00d4ff;
-            --accent-secondary: #7c3aed;
-            --accent-glow: rgba(0, 212, 255, 0.15);
-            --border: rgba(255, 255, 255, 0.06);
-            --border-strong: rgba(255, 255, 255, 0.12);
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --selection-bg: rgba(0, 212, 255, 0.25);
-            --selection-color: #f0f0f5;
-            --font-primary: 'Inter', sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
-            --font-display: 'Space Grotesk', sans-serif;
-            --cursor-size: 12px;
-            --cursor-trail: 8;
-            --transition: cubic-bezier(0.23, 1, 0.32, 1);
-            --grain-opacity: 0.03;
+            --bg: #0a0a0a;
+            --bg-mat: #0f0f0f;
+            --surface: #141414;
+            --surface-hover: #1a1a1a;
+            --text: #e8e8e8;
+            --text-muted: #666;
+            --text-dim: #444;
+            --accent: #ff3e3e;
+            --accent-glow: rgba(255,62,62,0.15);
+            --border: #222;
+            --border-hover: #333;
+            --font-main: 'JetBrains Mono', 'Fira Code', monospace;
+            --cursor-size: 20px;
+            --selection-bg: rgba(255,62,62,0.3);
+            --selection-color: #fff;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Theme: Light */
-        [data-theme="light"] {
-            --bg-primary: #fafafa;
-            --bg-secondary: #f0f0f5;
-            --bg-tertiary: #e8e8f0;
-            --bg-card: #ffffff;
-            --bg-hover: #f5f5fa;
-            --text-primary: #0a0a0f;
-            --text-secondary: #6a6a7a;
-            --text-tertiary: #9a9aaa;
-            --accent: #0066ff;
-            --accent-secondary: #7c3aed;
-            --accent-glow: rgba(0, 102, 255, 0.12);
-            --border: rgba(0, 0, 0, 0.06);
-            --border-strong: rgba(0, 0, 0, 0.12);
-            --selection-bg: rgba(0, 102, 255, 0.2);
-            --selection-color: #0a0a0f;
-            --grain-opacity: 0.02;
-        }
-
-        /* Theme: Matrix */
-        [data-theme="matrix"] {
-            --bg-primary: #000000;
-            --bg-secondary: #050a05;
-            --bg-tertiary: #0a150a;
-            --bg-card: #081008;
-            --bg-hover: #0d1a0d;
-            --text-primary: #e0ffe0;
-            --text-secondary: #5a8a5a;
-            --text-tertiary: #3a6a3a;
-            --accent: #00ff41;
-            --accent-secondary: #00cc33;
-            --accent-glow: rgba(0, 255, 65, 0.15);
-            --border: rgba(0, 255, 65, 0.08);
-            --border-strong: rgba(0, 255, 65, 0.15);
-            --selection-bg: rgba(0, 255, 65, 0.25);
-            --selection-color: #e0ffe0;
-            --grain-opacity: 0.04;
-        }
-
-        /* Theme: Midnight */
-        [data-theme="midnight"] {
-            --bg-primary: #0f0a1a;
-            --bg-secondary: #151020;
-            --bg-tertiary: #1a1528;
-            --bg-card: #18122b;
-            --bg-hover: #201830;
-            --text-primary: #f0e6ff;
-            --text-secondary: #8a7aaa;
-            --text-tertiary: #6a5a8a;
-            --accent: #c084fc;
-            --accent-secondary: #a855f7;
-            --accent-glow: rgba(192, 132, 252, 0.15);
-            --border: rgba(192, 132, 252, 0.06);
-            --border-strong: rgba(192, 132, 252, 0.12);
-            --selection-bg: rgba(192, 132, 252, 0.25);
-            --selection-color: #f0e6ff;
-            --grain-opacity: 0.03;
-        }
-
-        /* Theme: Warm */
-        [data-theme="warm"] {
-            --bg-primary: #1a1510;
-            --bg-secondary: #201a15;
-            --bg-tertiary: #282018;
-            --bg-card: #231c15;
-            --bg-hover: #2a2218;
-            --text-primary: #f5e6d0;
-            --text-secondary: #a09080;
-            --text-tertiary: #7a6a5a;
-            --accent: #ff9f43;
-            --accent-secondary: #ee5a24;
-            --accent-glow: rgba(255, 159, 67, 0.15);
-            --border: rgba(255, 159, 67, 0.06);
-            --border-strong: rgba(255, 159, 67, 0.12);
-            --selection-bg: rgba(255, 159, 67, 0.25);
-            --selection-color: #f5e6d0;
-            --grain-opacity: 0.03;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         ::selection {
             background: var(--selection-bg);
             color: var(--selection-color);
         }
 
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-primary);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--text-tertiary);
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-secondary);
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        html { scroll-behavior: smooth; }
+        
         body {
-            font-family: var(--font-primary);
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            font-family: var(--font-main);
+            background: var(--bg);
+            color: var(--text);
             overflow-x: hidden;
             cursor: none;
-            line-height: 1.6;
+            min-height: 100vh;
+            transition: var(--transition);
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Grain Overlay */
-        .grain-overlay {
+        /* ========== THEME SYSTEM ========== */
+        body.theme-light {
+            --bg: #f5f5f5;
+            --bg-mat: #fafafa;
+            --surface: #fff;
+            --surface-hover: #f0f0f0;
+            --text: #1a1a1a;
+            --text-muted: #888;
+            --text-dim: #bbb;
+            --accent: #0066ff;
+            --accent-glow: rgba(0,102,255,0.15);
+            --border: #e0e0e0;
+            --border-hover: #ccc;
+            --selection-bg: rgba(0,102,255,0.3);
+            --selection-color: #000;
+        }
+
+        body.theme-matrix {
+            --bg: #000;
+            --bg-mat: #001100;
+            --surface: #001a00;
+            --surface-hover: #002200;
+            --text: #00ff41;
+            --text-muted: #008f11;
+            --text-dim: #004411;
+            --accent: #00ff41;
+            --accent-glow: rgba(0,255,65,0.2);
+            --border: #003300;
+            --border-hover: #005500;
+            --selection-bg: rgba(0,255,65,0.4);
+            --selection-color: #000;
+        }
+
+        body.theme-void {
+            --bg: #050505;
+            --bg-mat: #080808;
+            --surface: #0a0a0a;
+            --surface-hover: #0d0d0d;
+            --text: #fff;
+            --text-muted: #555;
+            --text-dim: #333;
+            --accent: #fff;
+            --accent-glow: rgba(255,255,255,0.1);
+            --border: #1a1a1a;
+            --border-hover: #2a2a2a;
+            --selection-bg: rgba(255,255,255,0.25);
+            --selection-color: #000;
+        }
+
+        body.font-jetbrains { --font-main: 'JetBrains Mono', monospace; }
+        body.font-fira { --font-main: 'Fira Code', monospace; }
+        body.font-source { --font-main: 'Source Code Pro', monospace; }
+        body.font-space { --font-main: 'Space Mono', monospace; }
+        body.font-ibm { --font-main: 'IBM Plex Mono', monospace; }
+
+        /* ========== CUSTOM CURSOR ========== */
+        .cursor {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9998;
-            opacity: var(--grain-opacity);
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-
-        /* Custom Cursor System */
-        .cursor-system {
-            position: fixed;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            z-index: 99999;
-            mix-blend-mode: difference;
-        }
-
-        .cursor-main {
             width: var(--cursor-size);
             height: var(--cursor-size);
+            border: 2px solid var(--accent);
             border-radius: 50%;
-            background: var(--accent);
-            position: fixed;
             pointer-events: none;
             z-index: 99999;
             transform: translate(-50%, -50%);
-            transition: width 0.3s var(--transition), height 0.3s var(--transition), background 0.3s;
+            transition: width 0.2s, height 0.2s, border-radius 0.2s, background 0.2s;
             mix-blend-mode: difference;
         }
-
-        .cursor-main.hovering {
-            width: 48px;
-            height: 48px;
-            background: transparent;
-            border: 2px solid var(--accent);
-            mix-blend-mode: difference;
-        }
-
-        .cursor-main.clicking {
-            transform: translate(-50%, -50%) scale(0.8);
-        }
-
-        .cursor-trail {
-            position: fixed;
-            pointer-events: none;
-            z-index: 99998;
-            border-radius: 50%;
+        .cursor.hover {
+            width: 50px;
+            height: 50px;
             background: var(--accent);
             opacity: 0.3;
-            transform: translate(-50%, -50%);
+            border-radius: 50%;
         }
-
-        .cursor-ring {
+        .cursor.click {
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+        }
+        .cursor-trail {
             position: fixed;
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--accent);
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
             border-radius: 50%;
             pointer-events: none;
-            z-index: 99997;
+            z-index: 99998;
+            opacity: 0.4;
             transform: translate(-50%, -50%);
-            transition: width 0.5s var(--transition), height 0.5s var(--transition), border-color 0.3s;
+        }
+        .cursor-boom {
+            position: fixed;
+            pointer-events: none;
+            z-index: 99997;
+            border-radius: 50%;
+            border: 1px solid var(--accent);
+            transform: translate(-50%, -50%) scale(0);
         }
 
-        .cursor-ring.hovering {
-            width: 64px;
-            height: 64px;
-            border-color: var(--accent-secondary);
-        }
-
-        /* Cursor Modes */
-        [data-cursor="ghost"] .cursor-main {
-            background: transparent;
-            border: 2px solid var(--accent);
-            mix-blend-mode: normal;
-        }
-
-        [data-cursor="matrix"] .cursor-main {
-            width: 16px;
-            height: 16px;
-            border-radius: 0;
-            background: var(--accent);
-            mix-blend-mode: normal;
-        }
-
-        [data-cursor="glitch"] .cursor-main {
-            animation: cursorGlitch 0.3s infinite;
-        }
-
-        @keyframes cursorGlitch {
-            0%, 100% { transform: translate(-50%, -50%) translate(0, 0); }
-            20% { transform: translate(-50%, -50%) translate(-2px, 2px); }
-            40% { transform: translate(-50%, -50%) translate(2px, -2px); }
-            60% { transform: translate(-50%, -50%) translate(-1px, -1px); }
-            80% { transform: translate(-50%, -50%) translate(1px, 1px); }
-        }
-
-        /* 3D Canvas */
+        /* ========== 3D CANVAS ========== */
         #canvas-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 0;
             pointer-events: none;
+            opacity: 0.6;
         }
+        canvas { display: block; }
 
-        #bg-canvas {
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Loading Screen */
-        .loading-screen {
+        /* ========== NOISE OVERLAY ========== */
+        .noise {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-primary);
-            z-index: 100000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            transition: opacity 0.8s var(--transition), visibility 0.8s;
-        }
-
-        .loading-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             pointer-events: none;
+            z-index: 1;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
         }
 
-        .loading-text {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            letter-spacing: 0.2em;
-            color: var(--text-tertiary);
-            margin-top: 2rem;
-            text-transform: uppercase;
-        }
-
-        .loading-bar {
-            width: 120px;
-            height: 2px;
-            background: var(--bg-tertiary);
-            margin-top: 1rem;
-            position: relative;
-            overflow: hidden;
-            border-radius: 2px;
-        }
-
-        .loading-bar-fill {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            background: var(--accent);
-            width: 0%;
-            transition: width 0.3s var(--transition);
-        }
-
-        .loading-logo {
-            font-family: var(--font-display);
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            letter-spacing: -0.02em;
-        }
-
-        .loading-logo span {
-            color: var(--accent);
-        }
-
-        /* Navigation */
-        .navbar {
+        /* ========== NAVIGATION ========== */
+        nav {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-            padding: 1.5rem 3rem;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 2rem 4rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: all 0.4s var(--transition);
-            border-bottom: 1px solid transparent;
-        }
-
-        .navbar.scrolled {
-            background: rgba(var(--bg-primary-rgb, 10, 10, 15), 0.8);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(10,10,10,0.5);
             border-bottom: 1px solid var(--border);
-            padding: 1rem 3rem;
+            transition: var(--transition);
         }
+        body.theme-light nav { background: rgba(245,245,245,0.7); }
+        body.theme-matrix nav { background: rgba(0,0,0,0.7); }
+        body.theme-void nav { background: rgba(5,5,5,0.8); }
 
-        .nav-logo {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
+        .logo {
+            font-size: 1.2rem;
             font-weight: 700;
-            color: var(--text-primary);
+            letter-spacing: 0.2em;
+            color: var(--text);
             text-decoration: none;
-            letter-spacing: -0.02em;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            position: relative;
         }
-
-        .nav-logo-icon {
-            width: 32px;
-            height: 32px;
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0;
+            width: 0; height: 2px;
             background: var(--accent);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-mono);
-            font-size: 0.875rem;
-            color: var(--bg-primary);
-            font-weight: 700;
+            transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        .logo:hover::after { width: 100%; }
 
         .nav-links {
             display: flex;
-            gap: 2.5rem;
-            align-items: center;
+            gap: 3rem;
+            list-style: none;
         }
-
-        .nav-link {
-            font-family: var(--font-mono);
-            font-size: 0.8125rem;
-            color: var(--text-secondary);
+        .nav-links a {
+            color: var(--text-muted);
             text-decoration: none;
-            letter-spacing: 0.05em;
-            transition: color 0.3s;
-            position: relative;
-            padding: 0.25rem 0;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
+            transition: var(--transition);
+            position: relative;
         }
-
-        .nav-link::after {
+        .nav-links a::after {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 1px;
+            bottom: -4px; left: 50%;
+            width: 0; height: 1px;
             background: var(--accent);
-            transition: width 0.4s var(--transition);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateX(-50%);
         }
-
-        .nav-link:hover {
-            color: var(--text-primary);
+        .nav-links a:hover {
+            color: var(--text);
         }
-
-        .nav-link:hover::after {
+        .nav-links a:hover::after {
             width: 100%;
         }
 
         .nav-actions {
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
             align-items: center;
         }
-
-        .btn {
-            font-family: var(--font-mono);
-            font-size: 0.8125rem;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-strong);
-            background: transparent;
-            color: var(--text-primary);
-            cursor: none;
-            transition: all 0.4s var(--transition);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            position: relative;
-            overflow: hidden;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: left 0.6s var(--transition);
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn:hover {
-            border-color: var(--accent);
-            box-shadow: 0 0 20px var(--accent-glow);
-            transform: translateY(-2px);
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: var(--bg-primary);
-            border-color: var(--accent);
-            font-weight: 600;
-        }
-
-        .btn-primary:hover {
-            background: var(--text-primary);
-            border-color: var(--text-primary);
-            box-shadow: 0 0 30px var(--accent-glow);
-        }
-
-        .btn-ghost {
-            border-color: transparent;
-            color: var(--text-secondary);
-        }
-
-        .btn-ghost:hover {
-            color: var(--text-primary);
-            background: var(--bg-hover);
-            border-color: var(--border);
-        }
-
         .btn-icon {
-            width: 40px;
-            height: 40px;
-            padding: 0;
+            width: 40px; height: 40px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        /* Mobile Menu */
-        .mobile-menu-btn {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
             cursor: none;
-            padding: 0.5rem;
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+        .btn-icon:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: rotate(30deg);
         }
 
-        .mobile-menu-btn span {
-            width: 24px;
-            height: 1.5px;
-            background: var(--text-primary);
-            transition: all 0.3s var(--transition);
-            transform-origin: center;
-        }
-
-        .mobile-menu-btn.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-
-        .mobile-menu-btn.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .mobile-menu-btn.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(5px, -5px);
-        }
-
-        /* Main Content */
-        .main-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Hero Section */
+        /* ========== HERO ========== */
         .hero {
             min-height: 100vh;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            padding: 8rem 3rem 4rem;
+            align-items: center;
             position: relative;
-        }
-
-        .hero-content {
-            max-width: 900px;
+            z-index: 2;
+            padding: 0 2rem;
             text-align: center;
-            position: relative;
         }
-
         .hero-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 1.2rem;
             border: 1px solid var(--border);
             border-radius: 100px;
-            font-family: var(--font-mono);
             font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
-            background: var(--bg-card);
-            backdrop-filter: blur(10px);
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            background: var(--surface);
         }
-
-        .hero-badge-dot {
-            width: 6px;
-            height: 6px;
+        .hero-badge .pulse {
+            width: 6px; height: 6px;
+            background: var(--accent);
             border-radius: 50%;
-            background: var(--success);
             animation: pulse 2s infinite;
         }
-
         @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
+            50% { opacity: 0.5; transform: scale(1.5); }
         }
-
-        .hero-title {
-            font-family: var(--font-display);
-            font-size: clamp(3rem, 8vw, 6rem);
-            font-weight: 700;
-            line-height: 1.05;
-            letter-spacing: -0.03em;
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: 300;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
             margin-bottom: 1.5rem;
-            color: var(--text-primary);
+            color: var(--text);
         }
-
-        .hero-title .accent-text {
+        .hero h1 span {
             color: var(--accent);
-            position: relative;
-            display: inline-block;
+            font-weight: 700;
         }
-
-        .hero-title .accent-text::after {
-            content: '';
-            position: absolute;
-            bottom: 0.1em;
-            left: 0;
-            width: 100%;
-            height: 0.1em;
-            background: var(--accent);
-            opacity: 0.3;
-            border-radius: 2px;
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 500px;
+            line-height: 1.8;
+            margin-bottom: 3rem;
         }
-
-        .hero-subtitle {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto 3rem;
-            line-height: 1.7;
-            font-weight: 400;
-        }
-
-        .hero-actions {
+        .hero-cta {
             display: flex;
             gap: 1rem;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
         }
 
-        .hero-stats {
-            display: flex;
-            gap: 3rem;
-            justify-content: center;
-            margin-top: 4rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border);
-        }
-
-        .hero-stat {
-            text-align: center;
-        }
-
-        .hero-stat-value {
-            font-family: var(--font-display);
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            line-height: 1;
-        }
-
-        .hero-stat-label {
-            font-family: var(--font-mono);
-            font-size: 0.6875rem;
-            color: var(--text-tertiary);
-            margin-top: 0.5rem;
+        /* ========== BUTTONS ========== */
+        .btn {
+            padding: 1rem 2.5rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            font-family: var(--font-main);
+            font-size: 0.85rem;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-        }
-
-        /* Section Styles */
-        .section {
-            padding: 8rem 3rem;
-            position: relative;
-        }
-
-        .section-header {
-            max-width: 800px;
-            margin: 0 auto 4rem;
-            text-align: center;
-        }
-
-        .section-label {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--accent);
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .section-title {
-            font-family: var(--font-display);
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1.1;
-            margin-bottom: 1rem;
-        }
-
-        .section-desc {
-            color: var(--text-secondary);
-            font-size: 1.125rem;
-            line-height: 1.7;
-        }
-
-        /* Detector Section */
-        .detector-section {
-            padding: 4rem 3rem 8rem;
-        }
-
-        .detector-container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .detector-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2rem;
+            cursor: none;
+            transition: var(--transition);
             position: relative;
             overflow: hidden;
         }
-
-        .detector-card::before {
+        .btn::before {
             content: '';
             position: absolute;
-            top: 0;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: var(--accent);
+            transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: -1;
+        }
+        .btn:hover::before {
             left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            opacity: 0.5;
+        }
+        .btn:hover {
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+        .btn-primary::before {
+            background: var(--text);
+        }
+        .btn-primary:hover {
+            color: var(--bg);
         }
 
+        /* ========== DETECTOR SECTION ========== */
+        .section {
+            position: relative;
+            z-index: 2;
+            padding: 8rem 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-title {
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .section-heading {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 300;
+            letter-spacing: -0.02em;
+            margin-bottom: 3rem;
+            color: var(--text);
+        }
+
+        .detector-box {
+            border: 1px solid var(--border);
+            background: var(--surface);
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
         .detector-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-mat);
         }
-
-        .detector-title {
-            font-family: var(--font-mono);
-            font-size: 0.875rem;
-            color: var(--text-secondary);
+        .detector-tabs {
+            display: flex;
+            gap: 2rem;
+        }
+        .detector-tab {
+            font-size: 0.8rem;
             letter-spacing: 0.1em;
             text-transform: uppercase;
+            color: var(--text-muted);
+            cursor: none;
+            transition: var(--transition);
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid transparent;
         }
-
-        .detector-status {
+        .detector-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        .detector-tab:hover { color: var(--text); }
+        .detector-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        .detector-action {
+            width: 32px; height: 32px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
+            justify-content: center;
+            cursor: none;
+            transition: var(--transition);
+            font-size: 0.8rem;
+        }
+        .detector-action:hover {
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
         .detector-textarea {
             width: 100%;
-            min-height: 200px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.25rem;
-            font-family: var(--font-mono);
-            font-size: 0.9375rem;
-            line-height: 1.7;
-            color: var(--text-primary);
-            resize: vertical;
-            transition: all 0.3s;
-            outline: none;
-            cursor: none;
-        }
-
-        .detector-textarea::placeholder {
-            color: var(--text-tertiary);
-        }
-
-        .detector-textarea:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
-        }
-
-        .detector-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .detector-info {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .detector-info-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* Results Panel */
-        .results-panel {
-            margin-top: 2rem;
+            min-height: 300px;
             padding: 2rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-family: var(--font-main);
+            font-size: 1rem;
+            line-height: 1.8;
+            resize: vertical;
+            outline: none;
         }
-
-        .results-panel.active {
-            display: block;
-            animation: fadeInUp 0.6s var(--transition);
+        .detector-textarea::placeholder {
+            color: var(--text-dim);
         }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .results-header {
+        .detector-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border);
+            background: var(--bg-mat);
         }
-
-        .results-title {
-            font-family: var(--font-mono);
-            font-size: 0.875rem;
-            color: var(--text-secondary);
+        .char-count {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+        .analyze-btn {
+            padding: 0.8rem 2rem;
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            font-family: var(--font-main);
+            font-size: 0.8rem;
             letter-spacing: 0.1em;
             text-transform: uppercase;
+            cursor: none;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px var(--accent-glow);
+        }
+        .analyze-btn.analyzing {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .analyze-btn .btn-text {
+            display: inline-block;
+            transition: transform 0.3s;
         }
 
-        .results-score {
+        /* ========== RESULTS ========== */
+        .results-panel {
+            display: none;
+            margin-top: 2rem;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            overflow: hidden;
+        }
+        .results-panel.active { display: block; animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .results-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border);
             display: flex;
-            align-items: center;
-            gap: 1rem;
+            justify-content: space-between;
+            align-items: flex-start;
         }
-
         .score-circle {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            border: 3px solid var(--border);
+            width: 120px; height: 120px;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: var(--font-display);
-            font-size: 1.25rem;
-            font-weight: 700;
-            position: relative;
         }
-
-        .score-circle::before {
-            content: '';
-            position: absolute;
-            inset: -3px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            border-top-color: var(--accent);
+        .score-circle svg {
             transform: rotate(-90deg);
-            transition: transform 1.5s var(--transition);
         }
-
-        .score-label {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
+        .score-circle .score-bg {
+            fill: none;
+            stroke: var(--border);
+            stroke-width: 4;
         }
-
-        .score-value {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
+        .score-circle .score-progress {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-dasharray: 339.292;
+            stroke-dashoffset: 339.292;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .score-text {
+            position: absolute;
+            font-size: 1.8rem;
             font-weight: 700;
-            color: var(--text-primary);
+            color: var(--accent);
         }
-
-        .results-breakdown {
+        .score-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+        .results-details {
+            padding: 2rem;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
+            gap: 2rem;
         }
-
-        .breakdown-item {
-            padding: 1rem;
-            background: var(--bg-card);
+        .detail-item {
+            padding: 1.5rem;
             border: 1px solid var(--border);
-            border-radius: 8px;
+            transition: var(--transition);
         }
-
-        .breakdown-label {
-            font-family: var(--font-mono);
-            font-size: 0.6875rem;
-            color: var(--text-tertiary);
-            letter-spacing: 0.1em;
+        .detail-item:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+        }
+        .detail-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
+            color: var(--text-muted);
             margin-bottom: 0.5rem;
         }
-
-        .breakdown-bar {
-            height: 4px;
-            background: var(--bg-tertiary);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-bottom: 0.5rem;
+        .detail-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
         }
-
-        .breakdown-fill {
-            height: 100%;
-            border-radius: 2px;
-            transition: width 1.5s var(--transition);
-            width: 0%;
-        }
-
-        .breakdown-value {
-            font-family: var(--font-mono);
-            font-size: 0.875rem;
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        /* Progress Bar */
-        .progress-container {
-            margin-top: 1.5rem;
-            display: none;
-        }
-
-        .progress-container.active {
-            display: block;
-        }
-
-        .progress-bar {
-            height: 2px;
-            background: var(--bg-tertiary);
-            border-radius: 2px;
-            overflow: hidden;
+        .detail-bar {
+            width: 100%;
+            height: 3px;
+            background: var(--border);
+            margin-top: 1rem;
             position: relative;
+            overflow: hidden;
         }
-
-        .progress-fill {
+        .detail-bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
-            width: 0%;
-            transition: width 0.3s;
-            position: relative;
-        }
-
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: -2px;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
             background: var(--accent);
-            box-shadow: 0 0 10px var(--accent);
+            width: 0;
+            transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .progress-text {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
-            margin-top: 0.75rem;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        /* Features Grid */
+        /* ========== FEATURES ========== */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .feature-card {
-            background: var(--bg-card);
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            background: var(--border);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2rem;
-            transition: all 0.5s var(--transition);
+        }
+        .feature-card {
+            background: var(--surface);
+            padding: 3rem 2rem;
+            transition: var(--transition);
             position: relative;
             overflow: hidden;
-            cursor: none;
         }
-
         .feature-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.5s var(--transition);
-        }
-
-        .feature-card:hover {
-            border-color: var(--border-strong);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-
-        .feature-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .feature-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            margin-bottom: 1.5rem;
-            transition: all 0.3s;
-        }
-
-        .feature-card:hover .feature-icon {
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: var(--accent);
-            border-color: var(--accent);
-            transform: scale(1.1);
+            opacity: 0;
+            transition: opacity 0.4s;
+            z-index: 0;
         }
-
+        .feature-card:hover::before {
+            opacity: 0.03;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            z-index: 10;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            position: relative;
+            z-index: 1;
+        }
         .feature-title {
-            font-family: var(--font-display);
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
+            margin-bottom: 1rem;
+            color: var(--text);
+            position: relative;
+            z-index: 1;
         }
-
         .feature-desc {
-            color: var(--text-secondary);
-            font-size: 0.9375rem;
-            line-height: 1.6;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+        .feature-number {
+            position: absolute;
+            top: 1.5rem; right: 1.5rem;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            letter-spacing: 0.1em;
         }
 
-        /* Pricing */
+        /* ========== PRICING ========== */
         .pricing-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
-            max-width: 1100px;
-            margin: 0 auto;
-            align-items: start;
         }
-
         .pricing-card {
-            background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 2.5rem;
+            background: var(--surface);
+            padding: 3rem 2.5rem;
+            transition: var(--transition);
             position: relative;
-            transition: all 0.5s var(--transition);
         }
-
-        .pricing-card.popular {
+        .pricing-card.featured {
             border-color: var(--accent);
             transform: scale(1.05);
-            box-shadow: 0 0 40px var(--accent-glow);
+            z-index: 10;
+            box-shadow: 0 0 60px var(--accent-glow);
         }
-
-        .pricing-card.popular::before {
-            content: 'Most Popular';
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--accent);
-            color: var(--bg-primary);
-            font-family: var(--font-mono);
-            font-size: 0.6875rem;
-            padding: 0.25rem 1rem;
-            border-radius: 100px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
         .pricing-card:hover {
-            border-color: var(--border-strong);
+            border-color: var(--border-hover);
             transform: translateY(-8px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
         }
-
-        .pricing-card.popular:hover {
+        .pricing-card.featured:hover {
             transform: scale(1.05) translateY(-8px);
         }
-
+        .pricing-badge {
+            position: absolute;
+            top: -1px; left: 50%;
+            transform: translateX(-50%);
+            padding: 0.4rem 1.2rem;
+            background: var(--accent);
+            color: var(--bg);
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
         .pricing-name {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
         }
-
-        .pricing-desc {
-            color: var(--text-secondary);
-            font-size: 0.9375rem;
-            margin-bottom: 2rem;
-        }
-
         .pricing-price {
-            font-family: var(--font-display);
-            font-size: 3.5rem;
-            font-weight: 700;
-            line-height: 1;
+            font-size: 3rem;
+            font-weight: 300;
+            color: var(--text);
             margin-bottom: 0.5rem;
-            display: flex;
-            align-items: flex-start;
+            letter-spacing: -0.02em;
         }
-
         .pricing-price span {
-            font-size: 1.25rem;
-            color: var(--text-tertiary);
-            margin-right: 0.25rem;
-            font-weight: 500;
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 400;
         }
-
-        .pricing-period {
-            font-family: var(--font-mono);
-            font-size: 0.875rem;
-            color: var(--text-tertiary);
+        .pricing-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
             margin-bottom: 2rem;
+            line-height: 1.6;
         }
-
         .pricing-features {
             list-style: none;
             margin-bottom: 2rem;
         }
-
         .pricing-features li {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 0;
+            padding: 0.8rem 0;
             border-bottom: 1px solid var(--border);
-            font-size: 0.9375rem;
-            color: var(--text-secondary);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
         }
-
-        .pricing-features li:last-child {
-            border-bottom: none;
-        }
-
         .pricing-features li::before {
-            content: '→';
-            color: var(--accent);
-            font-family: var(--font-mono);
-            font-weight: 700;
-        }
-
-        .pricing-features li.included::before {
-            content: '✓';
-        }
-
-        .pricing-features li.not-included {
-            opacity: 0.4;
-        }
-
-        .pricing-features li.not-included::before {
-            content: '×';
-            color: var(--text-tertiary);
-        }
-
-        /* How It Works */
-        .steps-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .step {
-            display: flex;
-            gap: 2rem;
-            margin-bottom: 3rem;
-            position: relative;
-        }
-
-        .step:last-child {
-            margin-bottom: 0;
-        }
-
-        .step-number {
-            font-family: var(--font-mono);
-            font-size: 0.875rem;
+            content: '›';
             color: var(--accent);
             font-weight: 700;
-            width: 48px;
-            height: 48px;
-            border: 2px solid var(--accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            position: relative;
-            background: var(--bg-card);
+        }
+        .pricing-btn {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            font-family: var(--font-main);
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: none;
+            transition: var(--transition);
+        }
+        .pricing-btn:hover {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+        .pricing-card.featured .pricing-btn {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+        .pricing-card.featured .pricing-btn:hover {
+            background: var(--text);
+            border-color: var(--text);
         }
 
-        .step-number::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 2px;
-            height: calc(100% + 3rem);
-            background: var(--border);
-        }
-
-        .step:last-child .step-number::after {
-            display: none;
-        }
-
-        .step-content {
-            padding-top: 0.5rem;
-        }
-
-        .step-title {
-            font-family: var(--font-display);
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .step-desc {
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* Testimonials */
-        .testimonials-grid {
+        /* ========== STATS ========== */
+        .stats-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 1.5rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .testimonial-card {
-            background: var(--bg-card);
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2px;
+            background: var(--border);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 2rem;
-            transition: all 0.4s var(--transition);
+            margin-top: 4rem;
         }
-
-        .testimonial-card:hover {
-            border-color: var(--border-strong);
-            transform: translateY(-4px);
+        .stat-item {
+            background: var(--surface);
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: var(--transition);
         }
-
-        .testimonial-quote {
-            font-size: 1.125rem;
-            line-height: 1.7;
-            color: var(--text-primary);
-            margin-bottom: 1.5rem;
-            font-style: italic;
+        .stat-item:hover {
+            background: var(--surface-hover);
         }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .testimonial-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-mono);
-            font-size: 0.875rem;
-            color: var(--accent);
+        .stat-value {
+            font-size: 2.5rem;
             font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
         }
-
-        .testimonial-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .testimonial-name {
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 0.9375rem;
-        }
-
-        .testimonial-role {
-            font-family: var(--font-mono);
+        .stat-label {
             font-size: 0.75rem;
-            color: var(--text-tertiary);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-muted);
         }
 
-        /* Settings Panel */
+        /* ========== SETTINGS PANEL ========== */
         .settings-overlay {
             position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 9999;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
             opacity: 0;
-            visibility: hidden;
-            transition: all 0.4s var(--transition);
-            backdrop-filter: blur(4px);
+            pointer-events: none;
+            transition: opacity 0.4s;
+            backdrop-filter: blur(10px);
         }
-
         .settings-overlay.active {
             opacity: 1;
-            visibility: visible;
+            pointer-events: all;
         }
-
         .settings-panel {
             position: fixed;
-            top: 0;
-            right: 0;
+            top: 0; right: 0;
             width: 420px;
             max-width: 100%;
-            height: 100%;
-            background: var(--bg-primary);
+            height: 100vh;
+            background: var(--surface);
             border-left: 1px solid var(--border);
-            z-index: 10000;
+            z-index: 1001;
             transform: translateX(100%);
-            transition: transform 0.5s var(--transition);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             overflow-y: auto;
             display: flex;
             flex-direction: column;
         }
-
         .settings-panel.active {
             transform: translateX(0);
         }
-
         .settings-header {
             padding: 2rem;
             border-bottom: 1px solid var(--border);
@@ -1371,1066 +841,667 @@ html_content = '''<!DOCTYPE html>
             align-items: center;
             position: sticky;
             top: 0;
-            background: var(--bg-primary);
+            background: var(--surface);
             z-index: 10;
         }
-
         .settings-title {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text);
         }
-
         .settings-close {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            width: 40px; height: 40px;
             border: 1px solid var(--border);
             background: transparent;
-            color: var(--text-primary);
+            color: var(--text-muted);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: none;
-            transition: all 0.3s;
-            font-size: 1.25rem;
+            transition: var(--transition);
+            font-size: 1.2rem;
         }
-
         .settings-close:hover {
-            background: var(--bg-hover);
             border-color: var(--accent);
             color: var(--accent);
+            transform: rotate(90deg);
         }
-
         .settings-body {
             padding: 2rem;
             flex: 1;
         }
-
         .settings-group {
             margin-bottom: 2.5rem;
         }
-
         .settings-group-title {
-            font-family: var(--font-mono);
             font-size: 0.75rem;
-            color: var(--text-tertiary);
-            letter-spacing: 0.2em;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
-            margin-bottom: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            color: var(--text-muted);
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border);
         }
-
-        .settings-group-title::before {
-            content: '//';
-            color: var(--accent);
-        }
-
         .theme-options {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
+            gap: 1rem;
         }
-
         .theme-option {
-            padding: 1rem;
+            padding: 1.5rem;
             border: 2px solid var(--border);
-            border-radius: 12px;
+            background: var(--bg-mat);
             cursor: none;
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            transition: var(--transition);
+            text-align: center;
         }
-
         .theme-option:hover {
-            border-color: var(--border-strong);
-            background: var(--bg-hover);
+            border-color: var(--border-hover);
         }
-
         .theme-option.active {
             border-color: var(--accent);
-            background: var(--accent-glow);
+            box-shadow: 0 0 20px var(--accent-glow);
         }
-
         .theme-preview {
-            width: 100%;
-            height: 40px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            margin: 0 auto 0.8rem;
+            border: 2px solid var(--border);
         }
-
         .theme-name {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+            font-size: 0.8rem;
+            color: var(--text);
+            letter-spacing: 0.05em;
         }
-
         .font-options {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 0.8rem;
         }
-
         .font-option {
-            padding: 1rem;
-            border: 2px solid var(--border);
-            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            font-family: var(--font-main);
+            font-size: 0.9rem;
             cursor: none;
-            transition: all 0.3s;
+            transition: var(--transition);
+            text-align: left;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-
         .font-option:hover {
-            border-color: var(--border-strong);
-            background: var(--bg-hover);
+            border-color: var(--border-hover);
+            color: var(--text);
         }
-
         .font-option.active {
             border-color: var(--accent);
-            background: var(--accent-glow);
+            color: var(--accent);
         }
-
         .font-sample {
-            font-size: 1.125rem;
-            color: var(--text-primary);
+            font-size: 0.8rem;
+            opacity: 0.6;
         }
-
-        .font-name {
-            font-family: var(--font-mono);
-            font-size: 0.6875rem;
-            color: var(--text-tertiary);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .cursor-options {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-        }
-
-        .cursor-option {
-            padding: 1rem;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            cursor: none;
-            transition: all 0.3s;
-            text-align: center;
-        }
-
-        .cursor-option:hover {
-            border-color: var(--border-strong);
-            background: var(--bg-hover);
-        }
-
-        .cursor-option.active {
-            border-color: var(--accent);
-            background: var(--accent-glow);
-        }
-
-        .cursor-option-name {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-top: 0.5rem;
-        }
-
-        .slider-control {
-            margin-bottom: 1.5rem;
-        }
-
-        .slider-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.75rem;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .slider-input {
-            width: 100%;
-            height: 4px;
-            border-radius: 2px;
-            background: var(--bg-tertiary);
-            outline: none;
-            -webkit-appearance: none;
-            cursor: none;
-        }
-
-        .slider-input::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--accent);
-            cursor: none;
-            box-shadow: 0 0 10px var(--accent-glow);
-            border: 2px solid var(--bg-primary);
-        }
-
-        .slider-input::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--accent);
-            cursor: none;
-            border: 2px solid var(--bg-primary);
-            box-shadow: 0 0 10px var(--accent-glow);
-        }
-
-        .toggle-control {
+        .toggle-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
         }
-
         .toggle-label {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+            font-size: 0.9rem;
+            color: var(--text);
         }
-
+        .toggle-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
         .toggle-switch {
-            width: 48px;
-            height: 24px;
-            border-radius: 12px;
-            background: var(--bg-tertiary);
+            width: 48px; height: 26px;
+            background: var(--border);
+            border-radius: 13px;
             position: relative;
             cursor: none;
-            transition: background 0.3s;
-            border: 1px solid var(--border);
+            transition: var(--transition);
+            flex-shrink: 0;
         }
-
-        .toggle-switch.active {
-            background: var(--accent);
-        }
-
         .toggle-switch::after {
             content: '';
             position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 18px;
-            height: 18px;
+            top: 3px; left: 3px;
+            width: 20px; height: 20px;
+            background: var(--text-muted);
             border-radius: 50%;
-            background: var(--text-primary);
-            transition: transform 0.3s var(--transition);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: var(--transition);
         }
-
+        .toggle-switch.active {
+            background: var(--accent);
+        }
         .toggle-switch.active::after {
-            transform: translateX(24px);
-            background: var(--bg-primary);
+            left: 25px;
+            background: var(--bg);
         }
-
         .settings-footer {
             padding: 2rem;
             border-top: 1px solid var(--border);
-            display: flex;
-            gap: 1rem;
+            background: var(--bg-mat);
         }
-
-        .settings-footer .btn {
-            flex: 1;
-        }
-
-        /* Footer */
-        .footer {
-            padding: 4rem 3rem 2rem;
-            border-top: 1px solid var(--border);
-            position: relative;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr repeat(3, 1fr);
-            gap: 3rem;
-            max-width: 1200px;
-            margin: 0 auto 4rem;
-        }
-
-        .footer-brand {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .footer-logo {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .footer-desc {
-            color: var(--text-secondary);
-            font-size: 0.9375rem;
-            line-height: 1.6;
-            max-width: 300px;
-        }
-
-        .footer-social {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 0.5rem;
-        }
-
-        .footer-social a {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
+        .reset-btn {
+            width: 100%;
+            padding: 1rem;
             border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: all 0.3s;
+            background: transparent;
+            color: var(--text-muted);
+            font-family: var(--font-main);
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
             cursor: none;
-            font-size: 0.875rem;
+            transition: var(--transition);
         }
-
-        .footer-social a:hover {
+        .reset-btn:hover {
             border-color: var(--accent);
             color: var(--accent);
-            background: var(--accent-glow);
         }
 
-        .footer-column h4 {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
+        /* ========== FOOTER ========== */
+        footer {
+            position: relative;
+            z-index: 2;
+            border-top: 1px solid var(--border);
+            padding: 4rem;
+            text-align: center;
+        }
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
             letter-spacing: 0.2em;
-            text-transform: uppercase;
-            margin-bottom: 1.5rem;
+            color: var(--text);
+            margin-bottom: 1rem;
         }
-
+        .footer-copy {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+        }
         .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
             list-style: none;
         }
-
-        .footer-links li {
-            margin-bottom: 0.75rem;
-        }
-
         .footer-links a {
-            color: var(--text-secondary);
+            color: var(--text-muted);
             text-decoration: none;
-            font-size: 0.9375rem;
-            transition: color 0.3s;
-            cursor: none;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: var(--transition);
         }
-
         .footer-links a:hover {
             color: var(--accent);
         }
 
-        .footer-bottom {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
+        /* ========== SCROLLBAR ========== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
 
-        .footer-copyright {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
-        }
-
-        .footer-legal {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .footer-legal a {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
-            text-decoration: none;
-            transition: color 0.3s;
-            cursor: none;
-        }
-
-        .footer-legal a:hover {
-            color: var(--accent);
-        }
-
-        /* Keyboard Shortcut Hint */
-        .kbd {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.125rem 0.5rem;
-            border-radius: 4px;
-            border: 1px solid var(--border);
-            background: var(--bg-secondary);
-            font-family: var(--font-mono);
-            font-size: 0.6875rem;
-            color: var(--text-tertiary);
-            min-width: 24px;
-        }
-
-        /* Scroll Reveal */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s var(--transition);
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Responsive */
+        /* ========== RESPONSIVE ========== */
         @media (max-width: 1024px) {
-            .pricing-card.popular {
-                transform: scale(1);
-            }
-            .pricing-card.popular:hover {
-                transform: scale(1) translateY(-8px);
-            }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .pricing-card.featured { transform: scale(1); }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
         }
-
         @media (max-width: 768px) {
-            .navbar {
-                padding: 1rem 1.5rem;
-            }
-            .nav-links {
-                display: none;
-            }
-            .mobile-menu-btn {
-                display: flex;
-            }
-            .hero {
-                padding: 6rem 1.5rem 3rem;
-            }
-            .section {
-                padding: 4rem 1.5rem;
-            }
-            .hero-stats {
-                gap: 1.5rem;
-                flex-wrap: wrap;
-            }
-            .features-grid,
-            .pricing-grid,
-            .testimonials-grid {
-                grid-template-columns: 1fr;
-            }
-            .footer-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .settings-panel {
-                width: 100%;
-            }
-            .cursor-main, .cursor-trail, .cursor-ring {
-                display: none;
-            }
-            body {
-                cursor: auto;
-            }
-            .btn, .detector-textarea, .nav-link, a, .settings-close, .toggle-switch, .theme-option, .font-option, .cursor-option, .slider-input {
-                cursor: auto;
-            }
+            nav { padding: 1.5rem 2rem; }
+            .nav-links { display: none; }
+            .section { padding: 4rem 2rem; }
+            .features-grid { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: 1fr; }
+            .settings-panel { width: 100%; }
         }
 
-        @media (max-width: 480px) {
-            .footer-grid {
-                grid-template-columns: 1fr;
-            }
-            .hero-actions {
-                flex-direction: column;
-                width: 100%;
-            }
-            .hero-actions .btn {
-                width: 100%;
-            }
-            .detector-actions {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .detector-actions .btn {
-                width: 100%;
-            }
-        }
-
-        /* Mobile Menu Panel */
-        .mobile-menu {
+        /* ========== LOADING ANIMATION ========== */
+        .loader {
+            display: none;
             position: fixed;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-primary);
-            z-index: 999;
-            transform: translateX(100%);
-            transition: transform 0.5s var(--transition);
-            display: flex;
-            flex-direction: column;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg);
+            z-index: 9999;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
             gap: 2rem;
         }
-
-        .mobile-menu.active {
-            transform: translateX(0);
+        .loader.active { display: flex; }
+        .loader-text {
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            animation: blink 1s infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .loader-bar {
+            width: 200px;
+            height: 2px;
+            background: var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .loader-bar::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: var(--accent);
+            animation: load 1.5s infinite;
+        }
+        @keyframes load {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
 
-        .mobile-menu a {
-            font-family: var(--font-display);
-            font-size: 2rem;
-            color: var(--text-primary);
-            text-decoration: none;
-            transition: color 0.3s;
+        /* ========== MARQUEE ========== */
+        .marquee {
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 2rem 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin: 4rem 0;
+        }
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+            font-size: 0.85rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+        .marquee-content span {
+            margin: 0 3rem;
+            color: var(--text-muted);
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
-        .mobile-menu a:hover {
-            color: var(--accent);
+        /* ========== SCAN LINE ========== */
+        .scan-line {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: var(--accent);
+            opacity: 0.5;
+            box-shadow: 0 0 20px var(--accent);
+            animation: scan 3s linear infinite;
+            display: none;
+        }
+        .scanning .scan-line { display: block; }
+        @keyframes scan {
+            0% { top: 0; opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { top: 100%; opacity: 0; }
         }
 
-        /* Utility */
-        .text-accent { color: var(--accent); }
-        .text-secondary { color: var(--text-secondary); }
-        .text-tertiary { color: var(--text-tertiary); }
-        .font-mono { font-family: var(--font-mono); }
-        .font-display { font-family: var(--font-display); }
-
-        /* Animation Classes */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+        /* ========== PARTICLE TEXT ========== */
+        .particle-text {
+            position: relative;
+            display: inline-block;
+        }
+        .particle-text .char {
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+        .particle-text:hover .char {
+            animation: charShake 0.5s ease-in-out;
+        }
+        @keyframes charShake {
+            0%, 100% { transform: translateY(0); }
+            25% { transform: translateY(-5px); }
+            75% { transform: translateY(5px); }
         }
 
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        /* ========== API SECTION ========== */
+        .api-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 3rem;
+            margin-top: 4rem;
         }
-
-        .animate-float {
-            animation: float 6s ease-in-out infinite;
+        .code-block {
+            background: var(--bg-mat);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            margin-top: 1.5rem;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            color: var(--text-muted);
         }
+        .code-block .comment { color: var(--text-dim); }
+        .code-block .keyword { color: var(--accent); }
+        .code-block .string { color: #7ee787; }
+        body.theme-light .code-block .string { color: #22863a; }
+        body.theme-void .code-block .string { color: #aaa; }
 
-        /* Divider */
-        .section-divider {
+        /* ========== DIVIDER ========== */
+        .divider {
             height: 1px;
-            background: linear-gradient(90deg, transparent, var(--border), transparent);
-            max-width: 1200px;
-            margin: 0 auto;
+            background: var(--border);
+            margin: 6rem auto;
+            max-width: 100px;
+            position: relative;
+        }
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px; height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600;700&family=Source+Code+Pro:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body data-theme="dark" data-cursor="default">
-
-    <!-- Loading Screen -->
-    <div class="loading-screen" id="loading-screen">
-        <div class="loading-logo">Sentinel<span>.</span></div>
-        <div class="loading-text">Initializing Neural Engine</div>
-        <div class="loading-bar">
-            <div class="loading-bar-fill" id="loading-bar-fill"></div>
-        </div>
+<body class="theme-void font-jetbrains">
+    <div class="loader" id="loader">
+        <div class="loader-text">INITIALIZING VOID</div>
+        <div class="loader-bar"></div>
     </div>
 
-    <!-- Grain Overlay -->
-    <div class="grain-overlay"></div>
+    <div class="noise"></div>
+    <div id="canvas-container"></div>
 
-    <!-- Custom Cursor -->
-    <div class="cursor-main" id="cursor-main"></div>
-    <div class="cursor-ring" id="cursor-ring"></div>
+    <div class="cursor" id="cursor"></div>
     <div id="cursor-trails"></div>
 
-    <!-- 3D Background -->
-    <div id="canvas-container">
-        <canvas id="bg-canvas"></canvas>
-    </div>
-
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar">
-        <a href="#" class="nav-logo">
-            <div class="nav-logo-icon">S</div>
-            Sentinel
-        </a>
-        <div class="nav-links" id="nav-links">
-            <a href="#detector" class="nav-link">Detector</a>
-            <a href="#features" class="nav-link">Features</a>
-            <a href="#pricing" class="nav-link">Pricing</a>
-            <a href="#how-it-works" class="nav-link">How It Works</a>
-        </div>
+    <nav>
+        <a href="#" class="logo">VOID</a>
+        <ul class="nav-links">
+            <li><a href="#detect">Detect</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#api">API</a></li>
+        </ul>
         <div class="nav-actions">
-            <button class="btn btn-ghost btn-icon" id="settings-btn" title="Settings (Ctrl+K)">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="3"></circle>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                </svg>
-            </button>
-            <a href="#detector" class="btn btn-primary">Get Started</a>
-        </div>
-        <div class="mobile-menu-btn" id="mobile-menu-btn">
-            <span></span>
-            <span></span>
-            <span></span>
+            <button class="btn-icon" id="settingsBtn" title="Settings">⚙</button>
+            <button class="btn-icon" id="themeBtn" title="Toggle Theme">◐</button>
         </div>
     </nav>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobile-menu">
-        <a href="#detector" class="mobile-nav-link">Detector</a>
-        <a href="#features" class="mobile-nav-link">Features</a>
-        <a href="#pricing" class="mobile-nav-link">Pricing</a>
-        <a href="#how-it-works" class="mobile-nav-link">How It Works</a>
-        <a href="#" class="mobile-nav-link" id="mobile-settings-link">Settings</a>
+    <section class="hero">
+        <div class="hero-badge">
+            <span class="pulse"></span>
+            <span>AI Detection Engine v3.0</span>
+        </div>
+        <h1 class="particle-text" id="heroTitle">
+            <span class="char">D</span><span class="char">E</span><span class="char">T</span><span class="char">E</span><span class="char">C</span><span class="char">T</span>
+            <br>
+            <span>THE</span> <span>UNREAL</span>
+        </h1>
+        <p>Advanced linguistic analysis to identify AI-generated content with surgical precision. Minimalist by design, powerful by nature.</p>
+        <div class="hero-cta">
+            <button class="btn btn-primary" onclick="scrollToDetect()">Start Analysis</button>
+            <button class="btn" onclick="scrollToApi()">View API</button>
+        </div>
+    </section>
+
+    <div class="marquee">
+        <div class="marquee-content">
+            <span>ACCURACY 99.7%</span> • <span>REAL-TIME ANALYSIS</span> • <span>DEEP LINGUISTIC PATTERNS</span> • <span>ZERO KNOWLEDGE PROOF</span> • <span>NEURAL FINGERPRINTING</span> • <span>STATISTICAL ANOMALY DETECTION</span> • <span>ACCURACY 99.7%</span> • <span>REAL-TIME ANALYSIS</span> • <span>DEEP LINGUISTIC PATTERNS</span> • <span>ZERO KNOWLEDGE PROOF</span> • <span>NEURAL FINGERPRINTING</span> • <span>STATISTICAL ANOMALY DETECTION</span> •
+        </div>
     </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
+    <section class="section" id="detect">
+        <div class="section-title">// Analysis Engine</div>
+        <div class="section-heading">Paste. Detect. Verify.</div>
         
-        <!-- Hero Section -->
-        <section class="hero" id="hero">
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <div class="hero-badge-dot"></div>
-                    <span>AI Detection Engine v3.0</span>
+        <div class="detector-box" id="detectorBox">
+            <div class="scan-line"></div>
+            <div class="detector-header">
+                <div class="detector-tabs">
+                    <div class="detector-tab active" data-tab="text">Text</div>
+                    <div class="detector-tab" data-tab="url">URL</div>
+                    <div class="detector-tab" data-tab="file">File</div>
                 </div>
-                <h1 class="hero-title">
-                    Detect Synthetic<br>
-                    <span class="accent-text">Intelligence</span>
-                </h1>
-                <p class="hero-subtitle">
-                    Advanced neural analysis to identify AI-generated content with surgical precision. 
-                    Built for professionals who demand absolute certainty.
-                </p>
-                <div class="hero-actions">
-                    <a href="#detector" class="btn btn-primary">
-                        Launch Detector
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
-                    </a>
-                    <a href="#how-it-works" class="btn btn-ghost">Learn More</a>
-                </div>
-                <div class="hero-stats">
-                    <div class="hero-stat">
-                        <div class="hero-stat-value" data-count="99.7">0</div>
-                        <div class="hero-stat-label">Accuracy %</div>
-                    </div>
-                    <div class="hero-stat">
-                        <div class="hero-stat-value" data-count="50">0</div>
-                        <div class="hero-stat-label">Million Scans</div>
-                    </div>
-                    <div class="hero-stat">
-                        <div class="hero-stat-value" data-count="12">0</div>
-                        <div class="hero-stat-label">AI Models</div>
-                    </div>
-                    <div class="hero-stat">
-                        <div class="hero-stat-value" data-count="24">0</div>
-                        <div class="hero-stat-label">ms Latency</div>
-                    </div>
+                <div class="detector-actions">
+                    <button class="detector-action" title="Clear" onclick="clearText()">×</button>
+                    <button class="detector-action" title="Sample" onclick="loadSample()">⌘</button>
                 </div>
             </div>
-        </section>
-
-        <div class="section-divider"></div>
-
-        <!-- Detector Section -->
-        <section class="detector-section" id="detector">
-            <div class="section-header reveal">
-                <span class="section-label">// Analysis Engine</span>
-                <h2 class="section-title">Real-Time Detection</h2>
-                <p class="section-desc">Paste any text below. Our neural network will analyze linguistic patterns, semantic coherence, and stylistic fingerprints to determine origin.</p>
-            </div>
-            <div class="detector-container reveal">
-                <div class="detector-card">
-                    <div class="detector-header">
-                        <div class="detector-title">Input Stream</div>
-                        <div class="detector-status">
-                            <div class="hero-badge-dot"></div>
-                            <span>System Online</span>
-                        </div>
-                    </div>
-                    <textarea 
-                        class="detector-textarea" 
-                        id="detector-input" 
-                        placeholder="Paste text here for analysis...&#10;&#10;Example: The rapid advancement of artificial intelligence has fundamentally transformed the landscape of content creation, enabling unprecedented levels of efficiency and scale in generating written material across diverse domains and applications."
-                    ></textarea>
-                    <div class="progress-container" id="progress-container">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progress-fill"></div>
-                        </div>
-                        <div class="progress-text">
-                            <span id="progress-status">Initializing neural pathways...</span>
-                            <span id="progress-percent">0%</span>
-                        </div>
-                    </div>
-                    <div class="detector-actions">
-                        <div class="detector-info">
-                            <div class="detector-info-item">
-                                <span class="font-mono text-tertiary">Characters:</span>
-                                <span class="font-mono" id="char-count">0</span>
-                            </div>
-                            <div class="detector-info-item">
-                                <span class="font-mono text-tertiary">Words:</span>
-                                <span class="font-mono" id="word-count">0</span>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary" id="analyze-btn">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;">
-                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                            </svg>
-                            Analyze Text
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Results Panel -->
-                <div class="results-panel" id="results-panel">
-                    <div class="results-header">
-                        <div class="results-title">Analysis Report</div>
-                        <div class="results-score">
-                            <div class="score-circle" id="score-circle">
-                                <span id="score-value">0%</span>
-                            </div>
-                            <div>
-                                <div class="score-label">AI Probability</div>
-                                <div class="score-value" id="ai-verdict">Analyzing...</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="results-breakdown" id="results-breakdown">
-                        <div class="breakdown-item">
-                            <div class="breakdown-label">Perplexity Score</div>
-                            <div class="breakdown-bar">
-                                <div class="breakdown-fill" id="perplexity-bar" style="background: var(--accent);"></div>
-                            </div>
-                            <div class="breakdown-value" id="perplexity-value">0.0</div>
-                        </div>
-                        <div class="breakdown-item">
-                            <div class="breakdown-label">Burstiness</div>
-                            <div class="breakdown-bar">
-                                <div class="breakdown-fill" id="burstiness-bar" style="background: var(--accent-secondary);"></div>
-                            </div>
-                            <div class="breakdown-value" id="burstiness-value">0.0</div>
-                        </div>
-                        <div class="breakdown-item">
-                            <div class="breakdown-label">Semantic Coherence</div>
-                            <div class="breakdown-bar">
-                                <div class="breakdown-fill" id="coherence-bar" style="background: var(--success);"></div>
-                            </div>
-                            <div class="breakdown-value" id="coherence-value">0.0</div>
-                        </div>
-                        <div class="breakdown-item">
-                            <div class="breakdown-label">Stylistic Variance</div>
-                            <div class="breakdown-bar">
-                                <div class="breakdown-fill" id="variance-bar" style="background: var(--warning);"></div>
-                            </div>
-                            <div class="breakdown-value" id="variance-value">0.0</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <div class="section-divider"></div>
-
-        <!-- Features Section -->
-        <section class="section" id="features">
-            <div class="section-header reveal">
-                <span class="section-label">// Capabilities</span>
-                <h2 class="section-title">Engineered for Precision</h2>
-                <p class="section-desc">Every component optimized for maximum detection accuracy with minimal false positives.</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card reveal">
-                    <div class="feature-icon">🧠</div>
-                    <h3 class="feature-title">Neural Fingerprinting</h3>
-                    <p class="feature-desc">Identifies unique linguistic signatures left by specific AI models including GPT-4, Claude, Gemini, and Llama with model-specific attribution.</p>
-                </div>
-                <div class="feature-card reveal">
-                    <div class="feature-icon">⚡</div>
-                    <h3 class="feature-title">Sub-Second Analysis</h3>
-                    <p class="feature-desc">Edge-optimized inference delivers results in under 24 milliseconds. Process thousands of documents in real-time without queue delays.</p>
-                </div>
-                <div class="feature-card reveal">
-                    <div class="feature-icon">🔒</div>
-                    <h3 class="feature-title">Zero Data Retention</h3>
-                    <p class="feature-desc">All analysis happens in-memory. Your text never touches persistent storage. SOC 2 Type II certified with full GDPR compliance.</p>
-                </div>
-                <div class="feature-card reveal">
-                    <div class="feature-icon">📊</div>
-                    <h3 class="feature-title">Confidence Scoring</h3>
-                    <p class="feature-desc">Not just binary results. Get granular probability distributions across multiple dimensions with explainable AI breakdowns.</p>
-                </div>
-                <div class="feature-card reveal">
-                    <div class="feature-icon">🔌</div>
-                    <h3 class="feature-title">API-First Architecture</h3>
-                    <p class="feature-desc">REST and GraphQL endpoints with SDKs for Python, Node.js, Go, and Ruby. Webhook support for asynchronous batch processing.</p>
-                </div>
-                <div class="feature-card reveal">
-                    <div class="feature-icon">🎯</div>
-                    <h3 class="feature-title">Adversarial Resilience</h3>
-                    <p class="feature-desc">Detects humanized, paraphrased, and adversarially modified AI content. Stays ahead of evasion techniques through continuous retraining.</p>
-                </div>
-            </div>
-        </section>
-
-        <div class="section-divider"></div>
-
-        <!-- How It Works -->
-        <section class="section" id="how-it-works">
-            <div class="section-header reveal">
-                <span class="section-label">// Process</span>
-                <h2 class="section-title">How It Works</h2>
-                <p class="section-desc">Four layers of analysis. One definitive answer.</p>
-            </div>
-            <div class="steps-container reveal">
-                <div class="step">
-                    <div class="step-number">01</div>
-                    <div class="step-content">
-                        <h3 class="step-title">Ingestion & Tokenization</h3>
-                        <p class="step-desc">Text is parsed into semantic tokens and normalized. Our tokenizer preserves contextual meaning while stripping formatting artifacts that could bias detection.</p>
-                    </div>
-                </div>
-                <div class="step">
-                    <div class="step-number">02</div>
-                    <div class="step-content">
-                        <h3 class="step-title">Feature Extraction</h3>
-                        <p class="step-desc">We extract 847 distinct linguistic features including perplexity distributions, n-gram patterns, syntactic tree depth, and semantic coherence vectors.</p>
-                    </div>
-                </div>
-                <div class="step">
-                    <div class="step-number">03</div>
-                    <div class="step-content">
-                        <h3 class="step-title">Neural Classification</h3>
-                        <p class="step-desc">Ensemble of transformer and LSTM models vote on origin probability. Each model specializes in different AI architectures and writing styles.</p>
-                    </div>
-                </div>
-                <div class="step">
-                    <div class="step-number">04</div>
-                    <div class="step-content">
-                        <h3 class="step-title">Attribution Report</h3>
-                        <p class="step-desc">Final probability is computed with confidence intervals. If AI-generated, we attribute to specific model families with explainable evidence mapping.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <div class="section-divider"></div>
-
-        <!-- Pricing Section -->
-        <section class="section" id="pricing">
-            <div class="section-header reveal">
-                <span class="section-label">// Pricing</span>
-                <h2 class="section-title">Simple, Transparent Pricing</h2>
-                <p class="section-desc">Start free. Scale as you grow. No hidden fees or usage traps.</p>
-            </div>
-            <div class="pricing-grid">
-                <div class="pricing-card reveal">
-                    <div class="pricing-name">Starter</div>
-                    <div class="pricing-desc">For individual researchers and small teams.</div>
-                    <div class="pricing-price"><span>$</span>0</div>
-                    <div class="pricing-period">Forever free</div>
-                    <ul class="pricing-features">
-                        <li class="included">100 scans / month</li>
-                        <li class="included">Basic probability score</li>
-                        <li class="included">Web interface access</li>
-                        <li class="not-included">API access</li>
-                        <li class="not-included">Batch processing</li>
-                        <li class="not-included">Model attribution</li>
-                    </ul>
-                    <button class="btn btn-ghost" style="width: 100%;">Get Started</button>
-                </div>
-                <div class="pricing-card popular reveal">
-                    <div class="pricing-name">Professional</div>
-                    <div class="pricing-desc">For content platforms and agencies.</div>
-                    <div class="pricing-price"><span>$</span>49</div>
-                    <div class="pricing-period">per month</div>
-                    <ul class="pricing-features">
-                        <li class="included">10,000 scans / month</li>
-                        <li class="included">Full breakdown metrics</li>
-                        <li class="included">REST API access</li>
-                        <li class="included">Batch processing</li>
-                        <li class="included">Model attribution</li>
-                        <li class="not-included">Custom model training</li>
-                    </ul>
-                    <button class="btn btn-primary" style="width: 100%;">Start Trial</button>
-                </div>
-                <div class="pricing-card reveal">
-                    <div class="pricing-name">Enterprise</div>
-                    <div class="pricing-desc">For organizations with custom needs.</div>
-                    <div class="pricing-price"><span>$</span>Custom</div>
-                    <div class="pricing-period">Annual billing</div>
-                    <ul class="pricing-features">
-                        <li class="included">Unlimited scans</li>
-                        <li class="included">GraphQL + Webhooks</li>
-                        <li class="included">SSO & SAML</li>
-                        <li class="included">Custom model training</li>
-                        <li class="included">Dedicated support</li>
-                        <li class="included">SLA guarantee</li>
-                    </ul>
-                    <button class="btn btn-ghost" style="width: 100%;">Contact Sales</button>
-                </div>
-            </div>
-        </section>
-
-        <div class="section-divider"></div>
-
-        <!-- Testimonials -->
-        <section class="section" id="testimonials">
-            <div class="section-header reveal">
-                <span class="section-label">// Testimonials</span>
-                <h2 class="section-title">Trusted by Industry Leaders</h2>
-            </div>
-            <div class="testimonials-grid">
-                <div class="testimonial-card reveal">
-                    <p class="testimonial-quote">"Sentinel reduced our content moderation overhead by 78%. The API integration took under two hours and the accuracy is unmatched in the market."</p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">SM</div>
-                        <div class="testimonial-info">
-                            <div class="testimonial-name">Sarah Mitchell</div>
-                            <div class="testimonial-role">CTO, ContentGuard</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card reveal">
-                    <p class="testimonial-quote">"We evaluated six detection platforms. Sentinel was the only one that correctly identified adversarially humanized GPT-4 content at scale."</p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">DK</div>
-                        <div class="testimonial-info">
-                            <div class="testimonial-name">David Kim</div>
-                            <div class="testimonial-role">Head of AI, EduVerify</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card reveal">
-                    <p class="testimonial-quote">"The zero-retention policy was critical for our legal compliance. Sub-millisecond latency means we can scan every submission in real-time without UX degradation."</p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">AR</div>
-                        <div class="testimonial-info">
-                            <div class="testimonial-name">Amara Rodriguez</div>
-                            <div class="testimonial-role">VP Engineering, NewsCheck</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-grid">
-            <div class="footer-brand">
-                <a href="#" class="footer-logo">
-                    <div class="nav-logo-icon">S</div>
-                    Sentinel
-                </a>
-                <p class="footer-desc">The most accurate AI text detection platform. Built for security, speed, and scale.</p>
-                <div class="footer-social">
-                    <a href="#" aria-label="Twitter">𝕏</a>
-                    <a href="#" aria-label="GitHub">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                        </svg>
-                    </a>
-                    <a href="#" aria-label="LinkedIn">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-            <div class="footer-column">
-                <h4>Product</h4>
-                <ul class="footer-links">
-                    <li><a href="#detector">Detector</a></li>
-                    <li><a href="#features">Features</a></li>
-                    <li><a href="#pricing">Pricing</a></li>
-                    <li><a href="#">API Docs</a></li>
-                    <li><a href="#">Changelog</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h4>Company</h4>
-                <ul class="footer-links">
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">Careers</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h4>Legal</h4>
-                <ul class="footer-links">
-                    <li><a href="#">Privacy</a></li>
-                    <li><a href="#">Terms</a></li>
-                    <li><a href="#">Security</a></li>
-                    <li><a href="#">Compliance</a></li>
-                </ul>
+            <textarea class="detector-textarea" id="inputText" placeholder="Paste your text here to analyze...\n\nOur engine will examine linguistic patterns, statistical anomalies, and neural fingerprints to determine if the content was generated by AI." spellcheck="false"></textarea>
+            <div class="detector-footer">
+                <div class="char-count" id="charCount">0 characters</div>
+                <button class="analyze-btn" id="analyzeBtn" onclick="analyzeText()">
+                    <span class="btn-text">Analyze Content</span>
+                </button>
             </div>
         </div>
-        <div class="footer-bottom">
-            <div class="footer-copyright">© 2026 Sentinel AI Inc. All rights reserved.</div>
-            <div class="footer-legal">
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
+
+        <div class="results-panel" id="resultsPanel">
+            <div class="results-header">
+                <div>
+                    <div class="section-title">// Analysis Results</div>
+                    <div style="font-size: 1.5rem; font-weight: 300; color: var(--text); margin-top: 0.5rem;">Content Analysis Complete</div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">Processed in <span id="processTime">0.00</span>s</div>
+                </div>
+                <div style="text-align: center;">
+                    <div class="score-circle">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                            <circle class="score-bg" cx="60" cy="60" r="54"/>
+                            <circle class="score-progress" id="scoreProgress" cx="60" cy="60" r="54"/>
+                        </svg>
+                        <div class="score-text" id="scoreText">0%</div>
+                    </div>
+                    <div class="score-label" id="scoreLabel">AI Probability</div>
+                </div>
+            </div>
+            <div class="results-details" id="resultsDetails">
+                <!-- Dynamically populated -->
             </div>
         </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="section" id="features">
+        <div class="section-title">// Capabilities</div>
+        <div class="section-heading">Engineered for Precision</div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-number">01</div>
+                <div class="feature-icon">◈</div>
+                <div class="feature-title">Neural Fingerprinting</div>
+                <div class="feature-desc">Identifies unique statistical signatures left by language models through entropy analysis and token distribution mapping.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-number">02</div>
+                <div class="feature-icon">◉</div>
+                <div class="feature-title">Perplexity Scoring</div>
+                <div class="feature-desc">Measures text predictability against neural model expectations. Lower perplexity indicates higher AI generation probability.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-number">03</div>
+                <div class="feature-icon">◆</div>
+                <div class="feature-title">Burstiness Analysis</div>
+                <div class="feature-desc">Detects unnatural variance in sentence complexity. Human writing exhibits higher burstiness than AI-generated text.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-number">04</div>
+                <div class="feature-icon">◇</div>
+                <div class="feature-title">Semantic Coherence</div>
+                <div class="feature-desc">Evaluates logical flow and topic consistency across paragraphs using transformer-based embeddings.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-number">05</div>
+                <div class="feature-icon">◎</div>
+                <div class="feature-title">N-gram Detection</div>
+                <div class="feature-desc">Analyzes repetitive patterns and common AI phrases through advanced n-gram frequency distribution.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-number">06</div>
+                <div class="feature-icon">◐</div>
+                <div class="feature-title">Real-time API</div>
+                <div class="feature-desc">Integrate detection capabilities into your workflow with our RESTful API. Sub-100ms response times guaranteed.</div>
+            </div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-item">
+                <div class="stat-value" data-count="99.7">0</div>
+                <div class="stat-label">Accuracy %</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" data-count="50">0</div>
+                <div class="stat-label">ms Latency</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" data-count="12">0</div>
+                <div class="stat-label">M+ Texts Analyzed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" data-count="47">0</div>
+                <div class="stat-label">AI Models Detected</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="section" id="pricing">
+        <div class="section-title">// Monetization</div>
+        <div class="section-heading">Simple Pricing</div>
+        
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-name">Starter</div>
+                <div class="pricing-price">$0<span>/mo</span></div>
+                <div class="pricing-desc">Perfect for individuals and small projects getting started with AI detection.</div>
+                <ul class="pricing-features">
+                    <li>500 analyses / month</li>
+                    <li>Basic detection engine</li>
+                    <li>Text input only</li>
+                    <li>Community support</li>
+                    <li>Standard API access</li>
+                </ul>
+                <button class="pricing-btn">Get Started</button>
+            </div>
+            <div class="pricing-card featured">
+                <div class="pricing-badge">Most Popular</div>
+                <div class="pricing-name">Professional</div>
+                <div class="pricing-price">$29<span>/mo</span></div>
+                <div class="pricing-desc">For professionals and teams requiring advanced detection capabilities.</div>
+                <ul class="pricing-features">
+                    <li>Unlimited analyses</li>
+                    <li>Advanced neural engine</li>
+                    <li>URL & File scanning</li>
+                    <li>Priority support</li>
+                    <li>Full API access</li>
+                    <li>Batch processing</li>
+                </ul>
+                <button class="pricing-btn">Upgrade Now</button>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-name">Enterprise</div>
+                <div class="pricing-price">$99<span>/mo</span></div>
+                <div class="pricing-desc">Custom solutions for organizations with high-volume detection needs.</div>
+                <ul class="pricing-features">
+                    <li>Everything in Pro</li>
+                    <li>Dedicated infrastructure</li>
+                    <li>Custom model training</li>
+                    <li>SLA guarantee</li>
+                    <li>White-label options</li>
+                    <li>24/7 dedicated support</li>
+                </ul>
+                <button class="pricing-btn">Contact Sales</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="section" id="api">
+        <div class="section-title">// Integration</div>
+        <div class="section-heading">Developer API</div>
+        
+        <div class="api-section">
+            <p style="color: var(--text-muted); line-height: 1.8; margin-bottom: 2rem;">
+                Integrate VOID's detection engine into your application with our simple REST API. 
+                Get started in minutes with comprehensive documentation and SDKs for all major languages.
+            </p>
+            
+            <div class="code-block">
+<span class="comment">// Detect AI-generated text with a single API call</span>
+<span class="keyword">const</span> response = <span class="keyword">await</span> fetch(<span class="string">'https://api.void.ai/v1/detect'</span>, {
+    method: <span class="string">'POST'</span>,
+    headers: {
+        <span class="string">'Authorization'</span>: <span class="string">'Bearer YOUR_API_KEY'</span>,
+        <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span>
+    },
+    body: JSON.stringify({
+        text: <span class="string">"Your content here..."</span>,
+        model: <span class="string">"neural-v3"</span>,
+        detailed: <span class="keyword">true</span>
+    })
+});
+
+<span class="keyword">const</span> result = <span class="keyword">await</span> response.json();
+<span class="comment">// Returns: { ai_probability: 0.97, confidence: 0.99, ... }</span>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-logo">VOID</div>
+        <div class="footer-copy">© 2026 VOID AI Detection. All rights reserved.</div>
+        <ul class="footer-links">
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Security</a></li>
+            <li><a href="#">Status</a></li>
+        </ul>
     </footer>
 
-    <!-- Settings Panel -->
-    <div class="settings-overlay" id="settings-overlay"></div>
-    <div class="settings-panel" id="settings-panel">
+    <div class="settings-overlay" id="settingsOverlay"></div>
+    <div class="settings-panel" id="settingsPanel">
         <div class="settings-header">
             <div class="settings-title">Configuration</div>
-            <button class="settings-close" id="settings-close">×</button>
+            <button class="settings-close" id="settingsClose">×</button>
         </div>
         <div class="settings-body">
             <div class="settings-group">
                 <div class="settings-group-title">Theme</div>
                 <div class="theme-options">
-                    <div class="theme-option active" data-theme="dark">
-                        <div class="theme-preview" style="background: #0a0a0f; border-color: #00d4ff;"></div>
+                    <div class="theme-option active" data-theme="void">
+                        <div class="theme-preview" style="background: #050505; border-color: #fff;"></div>
+                        <div class="theme-name">Void</div>
+                    </div>
+                    <div class="theme-option" data-theme="dark">
+                        <div class="theme-preview" style="background: #0a0a0a; border-color: #ff3e3e;"></div>
                         <div class="theme-name">Dark</div>
                     </div>
                     <div class="theme-option" data-theme="light">
-                        <div class="theme-preview" style="background: #fafafa; border-color: #0066ff;"></div>
+                        <div class="theme-preview" style="background: #f5f5f5; border-color: #0066ff;"></div>
                         <div class="theme-name">Light</div>
                     </div>
                     <div class="theme-option" data-theme="matrix">
                         <div class="theme-preview" style="background: #000; border-color: #00ff41;"></div>
                         <div class="theme-name">Matrix</div>
-                    </div>
-                    <div class="theme-option" data-theme="midnight">
-                        <div class="theme-preview" style="background: #0f0a1a; border-color: #c084fc;"></div>
-                        <div class="theme-name">Midnight</div>
-                    </div>
-                    <div class="theme-option" data-theme="warm">
-                        <div class="theme-preview" style="background: #1a1510; border-color: #ff9f43;"></div>
-                        <div class="theme-name">Warm</div>
                     </div>
                 </div>
             </div>
@@ -2438,814 +1509,588 @@ html_content = '''<!DOCTYPE html>
             <div class="settings-group">
                 <div class="settings-group-title">Typography</div>
                 <div class="font-options">
-                    <div class="font-option active" data-font="inter">
-                        <div>
-                            <div class="font-sample" style="font-family: 'Inter';">Inter</div>
-                            <div class="font-name">Sans-serif</div>
-                        </div>
+                    <div class="font-option active" data-font="jetbrains">
+                        <span>JetBrains Mono</span>
+                        <span class="font-sample" style="font-family: 'JetBrains Mono'">Aa</span>
                     </div>
-                    <div class="font-option" data-font="jetbrains">
-                        <div>
-                            <div class="font-sample" style="font-family: 'JetBrains Mono';">JetBrains Mono</div>
-                            <div class="font-name">Monospace</div>
-                        </div>
+                    <div class="font-option" data-font="fira">
+                        <span>Fira Code</span>
+                        <span class="font-sample" style="font-family: 'Fira Code'">Aa</span>
+                    </div>
+                    <div class="font-option" data-font="source">
+                        <span>Source Code Pro</span>
+                        <span class="font-sample" style="font-family: 'Source Code Pro'">Aa</span>
                     </div>
                     <div class="font-option" data-font="space">
-                        <div>
-                            <div class="font-sample" style="font-family: 'Space Grotesk';">Space Grotesk</div>
-                            <div class="font-name">Display</div>
-                        </div>
+                        <span>Space Mono</span>
+                        <span class="font-sample" style="font-family: 'Space Mono'">Aa</span>
+                    </div>
+                    <div class="font-option" data-font="ibm">
+                        <span>IBM Plex Mono</span>
+                        <span class="font-sample" style="font-family: 'IBM Plex Mono'">Aa</span>
                     </div>
                 </div>
             </div>
 
             <div class="settings-group">
-                <div class="settings-group-title">Cursor</div>
-                <div class="cursor-options">
-                    <div class="cursor-option active" data-cursor="default">
-                        <div style="font-size: 1.5rem;">●</div>
-                        <div class="cursor-option-name">Default</div>
+                <div class="settings-group-title">Preferences</div>
+                <div class="toggle-row">
+                    <div>
+                        <div class="toggle-label">3D Background</div>
+                        <div class="toggle-desc">Animated particle field</div>
                     </div>
-                    <div class="cursor-option" data-cursor="ghost">
-                        <div style="font-size: 1.5rem;">○</div>
-                        <div class="cursor-option-name">Ghost</div>
-                    </div>
-                    <div class="cursor-option" data-cursor="matrix">
-                        <div style="font-size: 1.5rem;">■</div>
-                        <div class="cursor-option-name">Matrix</div>
-                    </div>
-                    <div class="cursor-option" data-cursor="glitch">
-                        <div style="font-size: 1.5rem;">✦</div>
-                        <div class="cursor-option-name">Glitch</div>
-                    </div>
+                    <div class="toggle-switch active" id="toggle3d"></div>
                 </div>
-            </div>
-
-            <div class="settings-group">
-                <div class="settings-group-title">Performance</div>
-                <div class="slider-control">
-                    <div class="slider-label">
-                        <span>Particle Density</span>
-                        <span id="particle-value">50%</span>
+                <div class="toggle-row">
+                    <div>
+                        <div class="toggle-label">Custom Cursor</div>
+                        <div class="toggle-desc">Boom cursor effect</div>
                     </div>
-                    <input type="range" class="slider-input" id="particle-slider" min="0" max="100" value="50">
+                    <div class="toggle-switch active" id="toggleCursor"></div>
                 </div>
-                <div class="slider-control">
-                    <div class="slider-label">
-                        <span>Animation Speed</span>
-                        <span id="speed-value">1.0x</span>
+                <div class="toggle-row">
+                    <div>
+                        <div class="toggle-label">Noise Overlay</div>
+                        <div class="toggle-desc">Film grain texture</div>
                     </div>
-                    <input type="range" class="slider-input" id="speed-slider" min="0.1" max="3" step="0.1" value="1">
+                    <div class="toggle-switch active" id="toggleNoise"></div>
                 </div>
-                <div class="toggle-control">
-                    <span class="toggle-label">Grain Overlay</span>
-                    <div class="toggle-switch active" id="grain-toggle"></div>
-                </div>
-                <div class="toggle-control">
-                    <span class="toggle-label">3D Background</span>
-                    <div class="toggle-switch active" id="bg-toggle"></div>
+                <div class="toggle-row">
+                    <div>
+                        <div class="toggle-label">Reduced Motion</div>
+                        <div class="toggle-desc">Minimize animations</div>
+                    </div>
+                    <div class="toggle-switch" id="toggleMotion"></div>
                 </div>
             </div>
         </div>
         <div class="settings-footer">
-            <button class="btn btn-ghost" id="settings-reset">Reset Defaults</button>
-            <button class="btn btn-primary" id="settings-save">Save Changes</button>
+            <button class="reset-btn" id="resetSettings">Reset to Defaults</button>
         </div>
     </div>
 
     <script>
-        // ============================================
-        // SENTINEL AI - MAIN APPLICATION
-        // ============================================
+        // ========== LOADER ==========
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.remove('active');
+            }, 1500);
+        });
+        document.getElementById('loader').classList.add('active');
 
-        // State Management
-        const State = {
-            theme: localStorage.getItem('sentinel-theme') || 'dark',
-            font: localStorage.getItem('sentinel-font') || 'inter',
-            cursor: localStorage.getItem('sentinel-cursor') || 'default',
-            particleDensity: parseInt(localStorage.getItem('sentinel-particles')) || 50,
-            animationSpeed: parseFloat(localStorage.getItem('sentinel-speed')) || 1,
-            grainEnabled: localStorage.getItem('sentinel-grain') !== 'false',
-            bgEnabled: localStorage.getItem('sentinel-bg') !== 'false',
-            isAnalyzing: false
-        };
+        // ========== THREE.JS 3D BACKGROUND ==========
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        // DOM Elements
-        const DOM = {
-            body: document.body,
-            loadingScreen: document.getElementById('loading-screen'),
-            loadingBar: document.getElementById('loading-bar-fill'),
-            cursorMain: document.getElementById('cursor-main'),
-            cursorRing: document.getElementById('cursor-ring'),
-            cursorTrails: document.getElementById('cursor-trails'),
-            navbar: document.getElementById('navbar'),
-            settingsBtn: document.getElementById('settings-btn'),
-            settingsPanel: document.getElementById('settings-panel'),
-            settingsOverlay: document.getElementById('settings-overlay'),
-            settingsClose: document.getElementById('settings-close'),
-            mobileMenuBtn: document.getElementById('mobile-menu-btn'),
-            mobileMenu: document.getElementById('mobile-menu'),
-            detectorInput: document.getElementById('detector-input'),
-            analyzeBtn: document.getElementById('analyze-btn'),
-            charCount: document.getElementById('char-count'),
-            wordCount: document.getElementById('word-count'),
-            progressContainer: document.getElementById('progress-container'),
-            progressFill: document.getElementById('progress-fill'),
-            progressStatus: document.getElementById('progress-status'),
-            progressPercent: document.getElementById('progress-percent'),
-            resultsPanel: document.getElementById('results-panel'),
-            scoreCircle: document.getElementById('score-circle'),
-            scoreValue: document.getElementById('score-value'),
-            aiVerdict: document.getElementById('ai-verdict')
-        };
-
-        // ============================================
-        // LOADING SEQUENCE
-        // ============================================
-        function simulateLoading() {
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 15 + 5;
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        DOM.loadingScreen.classList.add('hidden');
-                        initApp();
-                    }, 400);
-                }
-                DOM.loadingBar.style.width = progress + '%';
-            }, 150);
+        const particles = [];
+        const particleCount = 80;
+        const geometry = new THREE.IcosahedronGeometry(0.15, 0);
+        
+        function getAccentColor() {
+            const style = getComputedStyle(document.body);
+            return style.getPropertyValue('--accent').trim() || '#ff3e3e';
+        }
+        
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\\d]{2})([a-f\\d]{2})([a-f\\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16) / 255,
+                g: parseInt(result[2], 16) / 255,
+                b: parseInt(result[3], 16) / 255
+            } : { r: 1, g: 0.24, b: 0.24 };
         }
 
-        // ============================================
-        // 3D BACKGROUND (Three.js)
-        // ============================================
-        let scene, camera, renderer, particles, geometry, material;
-        let mouseX = 0, mouseY = 0;
-        let targetX = 0, targetY = 0;
-
-        function initThreeJS() {
-            const container = document.getElementById('canvas-container');
-            const canvas = document.getElementById('bg-canvas');
-            
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 50;
-
-            renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-            // Create particles
-            const particleCount = Math.floor((State.particleDensity / 100) * 2000);
-            const positions = new Float32Array(particleCount * 3);
-            const colors = new Float32Array(particleCount * 3);
-
-            const colorPalette = getThemeColors();
-
-            for (let i = 0; i < particleCount; i++) {
-                positions[i * 3] = (Math.random() - 0.5) * 100;
-                positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
-                positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
-
-                const color = new THREE.Color(colorPalette[Math.floor(Math.random() * colorPalette.length)]);
-                colors[i * 3] = color.r;
-                colors[i * 3 + 1] = color.g;
-                colors[i * 3 + 2] = color.b;
-            }
-
-            geometry = new THREE.BufferGeometry();
-            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-            material = new THREE.PointsMaterial({
-                size: 0.5,
-                vertexColors: true,
+        for (let i = 0; i < particleCount; i++) {
+            const rgb = hexToRgb(getAccentColor());
+            const material = new THREE.MeshBasicMaterial({
+                color: new THREE.Color(rgb.r, rgb.g, rgb.b),
                 transparent: true,
-                opacity: 0.6,
-                blending: THREE.AdditiveBlending
+                opacity: 0.6
             });
-
-            particles = new THREE.Points(geometry, material);
-            scene.add(particles);
-
-            // Add floating geometric shapes
-            const shapes = [];
-            const shapeGeometries = [
-                new THREE.TorusKnotGeometry(3, 1, 100, 16),
-                new THREE.IcosahedronGeometry(4, 0),
-                new THREE.OctahedronGeometry(3, 0)
-            ];
-
-            shapeGeometries.forEach((geom, i) => {
-                const shapeMaterial = new THREE.MeshBasicMaterial({
-                    color: colorPalette[i % colorPalette.length],
-                    wireframe: true,
-                    transparent: true,
-                    opacity: 0.15
-                });
-                const mesh = new THREE.Mesh(geom, shapeMaterial);
-                mesh.position.set(
-                    (Math.random() - 0.5) * 60,
-                    (Math.random() - 0.5) * 60,
-                    (Math.random() - 0.5) * 40
-                );
-                mesh.userData = {
-                    rotSpeed: (Math.random() - 0.5) * 0.01,
-                    floatSpeed: Math.random() * 0.5 + 0.5,
-                    floatOffset: Math.random() * Math.PI * 2
-                };
-                shapes.push(mesh);
-                scene.add(mesh);
-            });
-
-            particles.userData = { shapes };
-
-            animate();
-        }
-
-        function getThemeColors() {
-            const theme = State.theme;
-            const palettes = {
-                dark: ['#00d4ff', '#7c3aed', '#10b981', '#f59e0b'],
-                light: ['#0066ff', '#7c3aed', '#10b981', '#f59e0b'],
-                matrix: ['#00ff41', '#00cc33', '#00aa22', '#008811'],
-                midnight: ['#c084fc', '#a855f7', '#7c3aed', '#6d28d9'],
-                warm: ['#ff9f43', '#ee5a24', '#feca57', '#ff6b6b']
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 10
+            );
+            mesh.userData = {
+                velocity: new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.01,
+                    (Math.random() - 0.5) * 0.01,
+                    (Math.random() - 0.5) * 0.005
+                ),
+                rotationSpeed: {
+                    x: (Math.random() - 0.5) * 0.02,
+                    y: (Math.random() - 0.5) * 0.02
+                }
             };
-            return palettes[theme] || palettes.dark;
+            scene.add(mesh);
+            particles.push(mesh);
         }
 
+        camera.position.z = 8;
+
+        let mouseX = 0, mouseY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        let frameCount = 0;
         function animate() {
-            if (!State.bgEnabled) return;
             requestAnimationFrame(animate);
+            frameCount++;
+            if (frameCount % 2 !== 0) return; // 30fps for performance
 
-            const time = Date.now() * 0.001 * State.animationSpeed;
-
-            // Smooth mouse follow
-            targetX += (mouseX - targetX) * 0.05;
-            targetY += (mouseY - targetY) * 0.05;
-
-            if (particles) {
-                particles.rotation.x += 0.0003 * State.animationSpeed;
-                particles.rotation.y += 0.0005 * State.animationSpeed;
-                particles.rotation.x += targetY * 0.0001;
-                particles.rotation.y += targetX * 0.0001;
-            }
-
-            // Animate shapes
-            if (particles && particles.userData.shapes) {
-                particles.userData.shapes.forEach(shape => {
-                    shape.rotation.x += shape.userData.rotSpeed * State.animationSpeed;
-                    shape.rotation.y += shape.userData.rotSpeed * State.animationSpeed;
-                    shape.position.y += Math.sin(time + shape.userData.floatOffset) * 0.02 * State.animationSpeed;
-                });
-            }
-
+            const rgb = hexToRgb(getAccentColor());
+            particles.forEach((p, i) => {
+                p.position.add(p.userData.velocity);
+                p.rotation.x += p.userData.rotationSpeed.x;
+                p.rotation.y += p.userData.rotationSpeed.y;
+                p.material.color.setRGB(rgb.r, rgb.g, rgb.b);
+                
+                if (Math.abs(p.position.x) > 10) p.userData.velocity.x *= -1;
+                if (Math.abs(p.position.y) > 10) p.userData.velocity.y *= -1;
+                if (Math.abs(p.position.z) > 5) p.userData.velocity.z *= -1;
+                
+                // Mouse interaction
+                const dx = mouseX * 5 - p.position.x;
+                const dy = mouseY * 5 - p.position.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 3) {
+                    p.position.x += dx * 0.001;
+                    p.position.y += dy * 0.001;
+                }
+            });
+            
+            camera.position.x += (mouseX * 0.5 - camera.position.x) * 0.02;
+            camera.position.y += (mouseY * 0.5 - camera.position.y) * 0.02;
+            camera.lookAt(scene.position);
+            
             renderer.render(scene, camera);
         }
+        animate();
 
-        function updateThreeJSTheme() {
-            if (!geometry) return;
-            const colors = geometry.attributes.color.array;
-            const colorPalette = getThemeColors();
-            
-            for (let i = 0; i < colors.length / 3; i++) {
-                const color = new THREE.Color(colorPalette[Math.floor(Math.random() * colorPalette.length)]);
-                colors[i * 3] = color.r;
-                colors[i * 3 + 1] = color.g;
-                colors[i * 3 + 2] = color.b;
-            }
-            geometry.attributes.color.needsUpdate = true;
-
-            if (particles && particles.userData.shapes) {
-                particles.userData.shapes.forEach((shape, i) => {
-                    shape.material.color.set(colorPalette[i % colorPalette.length]);
-                });
-            }
-        }
-
-        function updateParticleCount() {
-            if (!scene) return;
-            scene.remove(particles);
-            if (particles.userData.shapes) {
-                particles.userData.shapes.forEach(s => scene.remove(s));
-            }
-            initThreeJS();
-        }
-
-        // ============================================
-        // CUSTOM CURSOR
-        // ============================================
-        const trailPositions = [];
-        const maxTrails = 12;
-
-        function initCursor() {
-            // Check if touch device
-            if (window.matchMedia('(pointer: coarse)').matches) return;
-
-            for (let i = 0; i < maxTrails; i++) {
-                const trail = document.createElement('div');
-                trail.className = 'cursor-trail';
-                trail.style.width = (8 - i * 0.5) + 'px';
-                trail.style.height = (8 - i * 0.5) + 'px';
-                trail.style.opacity = (0.3 - i * 0.02);
-                DOM.cursorTrails.appendChild(trail);
-                trailPositions.push({ x: 0, y: 0, el: trail });
-            }
-
-            document.addEventListener('mousemove', (e) => {
-                mouseX = (e.clientX - window.innerWidth / 2) * 0.5;
-                mouseY = (e.clientY - window.innerHeight / 2) * 0.5;
-
-                DOM.cursorMain.style.left = e.clientX + 'px';
-                DOM.cursorMain.style.top = e.clientY + 'px';
-                DOM.cursorRing.style.left = e.clientX + 'px';
-                DOM.cursorRing.style.top = e.clientY + 'px';
-
-                // Update trail target
-                trailPositions[0].x = e.clientX;
-                trailPositions[0].y = e.clientY;
-            });
-
-            document.addEventListener('mousedown', () => {
-                DOM.cursorMain.classList.add('clicking');
-            });
-
-            document.addEventListener('mouseup', () => {
-                DOM.cursorMain.classList.remove('clicking');
-            });
-
-            // Magnetic effect for buttons
-            const magneticElements = document.querySelectorAll('.btn, .nav-logo, .feature-card, .testimonial-card');
-            magneticElements.forEach(el => {
-                el.addEventListener('mouseenter', () => {
-                    DOM.cursorMain.classList.add('hovering');
-                    DOM.cursorRing.classList.add('hovering');
-                });
-                el.addEventListener('mouseleave', () => {
-                    DOM.cursorMain.classList.remove('hovering');
-                    DOM.cursorRing.classList.remove('hovering');
-                });
-            });
-
-            animateCursor();
-        }
-
-        function animateCursor() {
-            if (window.matchMedia('(pointer: coarse)').matches) return;
-            
-            for (let i = trailPositions.length - 1; i > 0; i--) {
-                trailPositions[i].x += (trailPositions[i - 1].x - trailPositions[i].x) * 0.35;
-                trailPositions[i].y += (trailPositions[i - 1].y - trailPositions[i].y) * 0.35;
-                trailPositions[i].el.style.left = trailPositions[i].x + 'px';
-                trailPositions[i].el.style.top = trailPositions[i].y + 'px';
-            }
-            requestAnimationFrame(animateCursor);
-        }
-
-        // ============================================
-        // THEME SYSTEM
-        // ============================================
-        function setTheme(theme) {
-            State.theme = theme;
-            DOM.body.setAttribute('data-theme', theme);
-            localStorage.setItem('sentinel-theme', theme);
-            updateThreeJSTheme();
-            
-            document.querySelectorAll('.theme-option').forEach(opt => {
-                opt.classList.toggle('active', opt.dataset.theme === theme);
-            });
-        }
-
-        function setFont(font) {
-            State.font = font;
-            localStorage.setItem('sentinel-font', font);
-            
-            const fontMap = {
-                inter: { primary: 'Inter', mono: 'JetBrains Mono', display: 'Space Grotesk' },
-                jetbrains: { primary: 'JetBrains Mono', mono: 'JetBrains Mono', display: 'JetBrains Mono' },
-                space: { primary: 'Space Grotesk', mono: 'JetBrains Mono', display: 'Space Grotesk' }
-            };
-            
-            const selected = fontMap[font];
-            document.documentElement.style.setProperty('--font-primary', selected.primary + ', sans-serif');
-            document.documentElement.style.setProperty('--font-display', selected.display + ', sans-serif');
-            
-            document.querySelectorAll('.font-option').forEach(opt => {
-                opt.classList.toggle('active', opt.dataset.font === font);
-            });
-        }
-
-        function setCursor(cursor) {
-            State.cursor = cursor;
-            DOM.body.setAttribute('data-cursor', cursor);
-            localStorage.setItem('sentinel-cursor', cursor);
-            
-            document.querySelectorAll('.cursor-option').forEach(opt => {
-                opt.classList.toggle('active', opt.dataset.cursor === cursor);
-            });
-        }
-
-        // ============================================
-        // SETTINGS PANEL
-        // ============================================
-        function openSettings() {
-            DOM.settingsPanel.classList.add('active');
-            DOM.settingsOverlay.classList.add('active');
-            DOM.body.style.overflow = 'hidden';
-        }
-
-        function closeSettings() {
-            DOM.settingsPanel.classList.remove('active');
-            DOM.settingsOverlay.classList.remove('active');
-            DOM.body.style.overflow = '';
-        }
-
-        function initSettings() {
-            // Theme options
-            document.querySelectorAll('.theme-option').forEach(opt => {
-                opt.addEventListener('click', () => setTheme(opt.dataset.theme));
-            });
-
-            // Font options
-            document.querySelectorAll('.font-option').forEach(opt => {
-                opt.addEventListener('click', () => setFont(opt.dataset.font));
-            });
-
-            // Cursor options
-            document.querySelectorAll('.cursor-option').forEach(opt => {
-                opt.addEventListener('click', () => setCursor(opt.dataset.cursor));
-            });
-
-            // Particle slider
-            const particleSlider = document.getElementById('particle-slider');
-            const particleValue = document.getElementById('particle-value');
-            particleSlider.addEventListener('input', (e) => {
-                State.particleDensity = parseInt(e.target.value);
-                particleValue.textContent = State.particleDensity + '%';
-            });
-            particleSlider.addEventListener('change', () => {
-                localStorage.setItem('sentinel-particles', State.particleDensity);
-                updateParticleCount();
-            });
-
-            // Speed slider
-            const speedSlider = document.getElementById('speed-slider');
-            const speedValue = document.getElementById('speed-value');
-            speedSlider.addEventListener('input', (e) => {
-                State.animationSpeed = parseFloat(e.target.value);
-                speedValue.textContent = State.animationSpeed.toFixed(1) + 'x';
-            });
-            speedSlider.addEventListener('change', () => {
-                localStorage.setItem('sentinel-speed', State.animationSpeed);
-            });
-
-            // Toggles
-            const grainToggle = document.getElementById('grain-toggle');
-            grainToggle.addEventListener('click', () => {
-                grainToggle.classList.toggle('active');
-                State.grainEnabled = grainToggle.classList.contains('active');
-                localStorage.setItem('sentinel-grain', State.grainEnabled);
-                document.querySelector('.grain-overlay').style.display = State.grainEnabled ? 'block' : 'none';
-            });
-
-            const bgToggle = document.getElementById('bg-toggle');
-            bgToggle.addEventListener('click', () => {
-                bgToggle.classList.toggle('active');
-                State.bgEnabled = bgToggle.classList.contains('active');
-                localStorage.setItem('sentinel-bg', State.bgEnabled);
-                document.getElementById('canvas-container').style.display = State.bgEnabled ? 'block' : 'none';
-            });
-
-            // Reset
-            document.getElementById('settings-reset').addEventListener('click', () => {
-                setTheme('dark');
-                setFont('inter');
-                setCursor('default');
-                particleSlider.value = 50;
-                particleValue.textContent = '50%';
-                State.particleDensity = 50;
-                speedSlider.value = 1;
-                speedValue.textContent = '1.0x';
-                State.animationSpeed = 1;
-                grainToggle.classList.add('active');
-                State.grainEnabled = true;
-                bgToggle.classList.add('active');
-                State.bgEnabled = true;
-                document.querySelector('.grain-overlay').style.display = 'block';
-                document.getElementById('canvas-container').style.display = 'block';
-                updateParticleCount();
-                localStorage.clear();
-            });
-
-            // Save
-            document.getElementById('settings-save').addEventListener('click', closeSettings);
-
-            // Event listeners
-            DOM.settingsBtn.addEventListener('click', openSettings);
-            DOM.settingsClose.addEventListener('click', closeSettings);
-            DOM.settingsOverlay.addEventListener('click', closeSettings);
-            document.getElementById('mobile-settings-link').addEventListener('click', (e) => {
-                e.preventDefault();
-                closeMobileMenu();
-                openSettings();
-            });
-
-            // Keyboard shortcut
-            document.addEventListener('keydown', (e) => {
-                if (e.ctrlKey && e.key === 'k') {
-                    e.preventDefault();
-                    DOM.settingsPanel.classList.contains('active') ? closeSettings() : openSettings();
-                }
-                if (e.key === 'Escape') {
-                    closeSettings();
-                    closeMobileMenu();
-                }
-            });
-        }
-
-        // ============================================
-        // MOBILE MENU
-        // ============================================
-        function toggleMobileMenu() {
-            DOM.mobileMenuBtn.classList.toggle('active');
-            DOM.mobileMenu.classList.toggle('active');
-        }
-
-        function closeMobileMenu() {
-            DOM.mobileMenuBtn.classList.remove('active');
-            DOM.mobileMenu.classList.remove('active');
-        }
-
-        // ============================================
-        // DETECTOR FUNCTIONALITY
-        // ============================================
-        function initDetector() {
-            DOM.detectorInput.addEventListener('input', updateCounts);
-            DOM.analyzeBtn.addEventListener('click', analyzeText);
-        }
-
-        function updateCounts() {
-            const text = DOM.detectorInput.value;
-            DOM.charCount.textContent = text.length;
-            DOM.wordCount.textContent = text.trim() ? text.trim().split(/\s+/).length : 0;
-        }
-
-        function analyzeText() {
-            if (State.isAnalyzing) return;
-            const text = DOM.detectorInput.value.trim();
-            if (!text) {
-                DOM.detectorInput.focus();
-                DOM.detectorInput.style.borderColor = 'var(--danger)';
-                setTimeout(() => {
-                    DOM.detectorInput.style.borderColor = '';
-                }, 1000);
-                return;
-            }
-
-            State.isAnalyzing = true;
-            DOM.analyzeBtn.disabled = true;
-            DOM.analyzeBtn.innerHTML = '<span class="font-mono">Processing...</span>';
-            DOM.resultsPanel.classList.remove('active');
-            DOM.progressContainer.classList.add('active');
-
-            const stages = [
-                { status: 'Tokenizing input stream...', progress: 15 },
-                { status: 'Extracting linguistic features...', progress: 35 },
-                { status: 'Running neural classification...', progress: 60 },
-                { status: 'Computing perplexity distributions...', progress: 80 },
-                { status: 'Generating attribution report...', progress: 100 }
-            ];
-
-            let currentStage = 0;
-            const stageInterval = setInterval(() => {
-                if (currentStage >= stages.length) {
-                    clearInterval(stageInterval);
-                    showResults(text);
-                    return;
-                }
-                const stage = stages[currentStage];
-                DOM.progressFill.style.width = stage.progress + '%';
-                DOM.progressStatus.textContent = stage.status;
-                DOM.progressPercent.textContent = stage.progress + '%';
-                currentStage++;
-            }, 600);
-        }
-
-        function showResults(text) {
-            // Simulate analysis based on text characteristics
-            const wordCount = text.trim().split(/\s+/).length;
-            const avgWordLength = text.length / wordCount;
-            const punctuationDensity = (text.match(/[.,;:!?]/g) || []).length / text.length;
-            
-            // Simple heuristic for demo (in real app, this would be ML inference)
-            let aiProbability = 0;
-            if (avgWordLength > 5.5 && punctuationDensity < 0.05) {
-                aiProbability = Math.random() * 30 + 60; // Likely AI
-            } else if (avgWordLength < 4.5) {
-                aiProbability = Math.random() * 20; // Likely human
-            } else {
-                aiProbability = Math.random() * 40 + 30; // Uncertain
-            }
-            
-            aiProbability = Math.min(99, Math.max(1, aiProbability));
-            
-            const perplexity = (Math.random() * 50 + 20).toFixed(1);
-            const burstiness = (Math.random() * 100).toFixed(1);
-            const coherence = (Math.random() * 30 + 70).toFixed(1);
-            const variance = (Math.random() * 100).toFixed(1);
-
-            DOM.progressContainer.classList.remove('active');
-            DOM.resultsPanel.classList.add('active');
-
-            // Animate score
-            let currentScore = 0;
-            const scoreInterval = setInterval(() => {
-                currentScore += 2;
-                if (currentScore >= aiProbability) {
-                    currentScore = aiProbability;
-                    clearInterval(scoreInterval);
-                }
-                DOM.scoreValue.textContent = Math.round(currentScore) + '%';
-                
-                const rotation = -90 + (currentScore / 100) * 360;
-                DOM.scoreCircle.style.setProperty('--rotation', rotation + 'deg');
-                DOM.scoreCircle.querySelector('::before') && (DOM.scoreCircle.style.cssText = DOM.scoreCircle.style.cssText);
-            }, 20);
-
-            // Set verdict
-            const verdict = aiProbability > 70 ? 'AI Generated' : aiProbability > 40 ? 'Mixed Origin' : 'Human Written';
-            const verdictColor = aiProbability > 70 ? 'var(--danger)' : aiProbability > 40 ? 'var(--warning)' : 'var(--success)';
-            DOM.aiVerdict.textContent = verdict;
-            DOM.aiVerdict.style.color = verdictColor;
-
-            // Animate bars
-            setTimeout(() => {
-                document.getElementById('perplexity-bar').style.width = perplexity + '%';
-                document.getElementById('perplexity-value').textContent = perplexity;
-                
-                document.getElementById('burstiness-bar').style.width = burstiness + '%';
-                document.getElementById('burstiness-value').textContent = burstiness;
-                
-                document.getElementById('coherence-bar').style.width = coherence + '%';
-                document.getElementById('coherence-value').textContent = coherence;
-                
-                document.getElementById('variance-bar').style.width = variance + '%';
-                document.getElementById('variance-value').textContent = variance;
-            }, 300);
-
-            // Reset button
-            State.isAnalyzing = false;
-            DOM.analyzeBtn.disabled = false;
-            DOM.analyzeBtn.innerHTML = `
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;">
-                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                </svg>
-                Analyze Text
-            `;
-        }
-
-        // ============================================
-        // SCROLL ANIMATIONS
-        // ============================================
-        function initScrollAnimations() {
-            // Navbar scroll effect
-            let lastScroll = 0;
-            window.addEventListener('scroll', () => {
-                const currentScroll = window.pageYOffset;
-                if (currentScroll > 100) {
-                    DOM.navbar.classList.add('scrolled');
-                } else {
-                    DOM.navbar.classList.remove('scrolled');
-                }
-                lastScroll = currentScroll;
-            });
-
-            // Reveal animations
-            const reveals = document.querySelectorAll('.reveal');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                    }
-                });
-            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-            reveals.forEach(el => observer.observe(el));
-
-            // Counter animation for stats
-            const statValues = document.querySelectorAll('.hero-stat-value[data-count]');
-            const statObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const target = parseFloat(entry.target.dataset.count);
-                        const isDecimal = target % 1 !== 0;
-                        let current = 0;
-                        const increment = target / 60;
-                        const counter = setInterval(() => {
-                            current += increment;
-                            if (current >= target) {
-                                current = target;
-                                clearInterval(counter);
-                            }
-                            entry.target.textContent = isDecimal ? current.toFixed(1) : Math.round(current);
-                        }, 25);
-                        statObserver.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.5 });
-
-            statValues.forEach(el => statObserver.observe(el));
-        }
-
-        // ============================================
-        // SMOOTH SCROLL
-        // ============================================
-        function initSmoothScroll() {
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        closeMobileMenu();
-                    }
-                });
-            });
-        }
-
-        // ============================================
-        // WINDOW RESIZE
-        // ============================================
         window.addEventListener('resize', () => {
-            if (camera && renderer) {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // ========== CUSTOM CURSOR ==========
+        const cursor = document.getElementById('cursor');
+        const trailsContainer = document.getElementById('cursor-trails');
+        const trails = [];
+        const trailCount = 8;
+
+        for (let i = 0; i < trailCount; i++) {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.opacity = (1 - i / trailCount) * 0.4;
+            trail.style.width = (8 - i) + 'px';
+            trail.style.height = (8 - i) + 'px';
+            trailsContainer.appendChild(trail);
+            trails.push({ el: trail, x: 0, y: 0 });
+        }
+
+        let cursorX = 0, cursorY = 0;
+        document.addEventListener('mousemove', (e) => {
+            cursorX = e.clientX;
+            cursorY = e.clientY;
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+        });
+
+        function animateTrails() {
+            trails.forEach((trail, i) => {
+                const prev = i === 0 ? { x: cursorX, y: cursorY } : trails[i - 1];
+                trail.x += (prev.x - trail.x) * (0.3 - i * 0.02);
+                trail.y += (prev.y - trail.y) * (0.3 - i * 0.02);
+                trail.el.style.left = trail.x + 'px';
+                trail.el.style.top = trail.y + 'px';
+            });
+            requestAnimationFrame(animateTrails);
+        }
+        animateTrails();
+
+        // Boom effect on click
+        document.addEventListener('click', (e) => {
+            const boom = document.createElement('div');
+            boom.className = 'cursor-boom';
+            boom.style.left = e.clientX + 'px';
+            boom.style.top = e.clientY + 'px';
+            boom.style.width = '10px';
+            boom.style.height = '10px';
+            document.body.appendChild(boom);
+            
+            gsap.to(boom, {
+                width: 100,
+                height: 100,
+                opacity: 0,
+                duration: 0.6,
+                ease: 'power2.out',
+                onComplete: () => boom.remove()
+            });
+            
+            // Create multiple rings
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const ring = document.createElement('div');
+                    ring.className = 'cursor-boom';
+                    ring.style.left = e.clientX + 'px';
+                    ring.style.top = e.clientY + 'px';
+                    ring.style.width = '20px';
+                    ring.style.height = '20px';
+                    ring.style.borderWidth = '1px';
+                    document.body.appendChild(ring);
+                    gsap.to(ring, {
+                        width: 80 + i * 40,
+                        height: 80 + i * 40,
+                        opacity: 0,
+                        duration: 0.8,
+                        ease: 'power2.out',
+                        onComplete: () => ring.remove()
+                    });
+                }, i * 100);
             }
         });
 
-        // ============================================
-        // APP INITIALIZATION
-        // ============================================
-        function initApp() {
-            // Apply saved state
-            setTheme(State.theme);
-            setFont(State.font);
-            setCursor(State.cursor);
-            
-            document.getElementById('particle-slider').value = State.particleDensity;
-            document.getElementById('particle-value').textContent = State.particleDensity + '%';
-            document.getElementById('speed-slider').value = State.animationSpeed;
-            document.getElementById('speed-value').textContent = State.animationSpeed.toFixed(1) + 'x';
-            
-            if (!State.grainEnabled) {
-                document.getElementById('grain-toggle').classList.remove('active');
-                document.querySelector('.grain-overlay').style.display = 'none';
-            }
-            if (!State.bgEnabled) {
-                document.getElementById('bg-toggle').classList.remove('active');
-                document.getElementById('canvas-container').style.display = 'none';
-            }
+        // Hover effects
+        document.querySelectorAll('a, button, .detector-tab, .theme-option, .font-option, .feature-card, .pricing-card').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
 
-            // Initialize systems
-            initThreeJS();
-            initCursor();
-            initSettings();
-            initDetector();
-            initScrollAnimations();
-            initSmoothScroll();
+        document.addEventListener('mousedown', () => cursor.classList.add('click'));
+        document.addEventListener('mouseup', () => cursor.classList.remove('click'));
 
-            // Mobile menu
-            DOM.mobileMenuBtn.addEventListener('click', toggleMobileMenu);
-            document.querySelectorAll('.mobile-nav-link').forEach(link => {
-                link.addEventListener('click', closeMobileMenu);
-            });
+        // ========== SETTINGS PANEL ==========
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const settingsOverlay = document.getElementById('settingsOverlay');
+        const settingsClose = document.getElementById('settingsClose');
 
-            // GSAP ScrollTrigger animations
-            if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-                gsap.registerPlugin(ScrollTrigger);
-                
-                gsap.from('.hero-badge', { opacity: 0, y: 20, duration: 1, delay: 0.2, ease: 'power3.out' });
-                gsap.from('.hero-title', { opacity: 0, y: 40, duration: 1, delay: 0.4, ease: 'power3.out' });
-                gsap.from('.hero-subtitle', { opacity: 0, y: 30, duration: 1, delay: 0.6, ease: 'power3.out' });
-                gsap.from('.hero-actions', { opacity: 0, y: 20, duration: 1, delay: 0.8, ease: 'power3.out' });
-                gsap.from('.hero-stats', { opacity: 0, y: 30, duration: 1, delay: 1, ease: 'power3.out' });
-            }
+        function openSettings() {
+            settingsPanel.classList.add('active');
+            settingsOverlay.classList.add('active');
+        }
+        function closeSettings() {
+            settingsPanel.classList.remove('active');
+            settingsOverlay.classList.remove('active');
         }
 
-        // Start loading
-        simulateLoading();
+        settingsBtn.addEventListener('click', openSettings);
+        settingsClose.addEventListener('click', closeSettings);
+        settingsOverlay.addEventListener('click', closeSettings);
+
+        // Theme switching
+        document.querySelectorAll('.theme-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+                opt.classList.add('active');
+                const theme = opt.dataset.theme;
+                document.body.className = document.body.className.replace(/theme-\\w+/, `theme-${theme}`);
+            });
+        });
+
+        // Font switching
+        document.querySelectorAll('.font-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                document.querySelectorAll('.font-option').forEach(o => o.classList.remove('active'));
+                opt.classList.add('active');
+                const font = opt.dataset.font;
+                document.body.className = document.body.className.replace(/font-\\w+/, `font-${font}`);
+            });
+        });
+
+        // Toggles
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                toggle.classList.toggle('active');
+                const id = toggle.id;
+                if (id === 'toggle3d') {
+                    document.getElementById('canvas-container').style.display = toggle.classList.contains('active') ? 'block' : 'none';
+                } else if (id === 'toggleCursor') {
+                    cursor.style.display = toggle.classList.contains('active') ? 'block' : 'none';
+                    trailsContainer.style.display = toggle.classList.contains('active') ? 'block' : 'none';
+                    document.body.style.cursor = toggle.classList.contains('active') ? 'none' : 'auto';
+                } else if (id === 'toggleNoise') {
+                    document.querySelector('.noise').style.display = toggle.classList.contains('active') ? 'block' : 'none';
+                }
+            });
+        });
+
+        // Reset
+        document.getElementById('resetSettings').addEventListener('click', () => {
+            document.body.className = 'theme-void font-jetbrains';
+            document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+            document.querySelector('[data-theme="void"]').classList.add('active');
+            document.querySelectorAll('.font-option').forEach(o => o.classList.remove('active'));
+            document.querySelector('[data-font="jetbrains"]').classList.add('active');
+            document.querySelectorAll('.toggle-switch').forEach(t => t.classList.add('active'));
+            document.getElementById('toggleMotion').classList.remove('active');
+            document.getElementById('canvas-container').style.display = 'block';
+            cursor.style.display = 'block';
+            trailsContainer.style.display = 'block';
+            document.body.style.cursor = 'none';
+            document.querySelector('.noise').style.display = 'block';
+        });
+
+        // Quick theme toggle
+        document.getElementById('themeBtn').addEventListener('click', () => {
+            const themes = ['void', 'dark', 'light', 'matrix'];
+            const current = document.body.className.match(/theme-(\\w+)/)?.[1] || 'void';
+            const next = themes[(themes.indexOf(current) + 1) % themes.length];
+            document.body.className = document.body.className.replace(/theme-\\w+/, `theme-${next}`);
+            document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+            document.querySelector(`[data-theme="${next}"]`)?.classList.add('active');
+        });
+
+        // ========== DETECTOR LOGIC ==========
+        const inputText = document.getElementById('inputText');
+        const charCount = document.getElementById('charCount');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const resultsPanel = document.getElementById('resultsPanel');
+        const detectorBox = document.getElementById('detectorBox');
+
+        inputText.addEventListener('input', () => {
+            const len = inputText.value.length;
+            charCount.textContent = `${len.toLocaleString()} character${len !== 1 ? 's' : ''}`;
+        });
+
+        function clearText() {
+            inputText.value = '';
+            charCount.textContent = '0 characters';
+            resultsPanel.classList.remove('active');
+        }
+
+        function loadSample() {
+            const sample = `The rapid advancement of artificial intelligence has fundamentally transformed the landscape of content creation. Large language models, trained on vast corpora of human-generated text, have achieved remarkable proficiency in generating coherent, contextually appropriate prose across diverse domains.
+
+However, this technological leap presents significant challenges for information integrity. The ability to distinguish between human-authored and machine-generated content has become increasingly critical for educators, publishers, and information consumers alike.
+
+Our detection methodology employs a multi-layered analytical framework. At its foundation lies perplexity scoring—a metric quantifying the predictability of text sequences relative to neural language model expectations. Human writing typically exhibits higher perplexity due to creative idiosyncrasies and unpredictable stylistic choices.
+
+Complementing this, we analyze burstiness patterns—the statistical variance in sentence complexity and length. Natural human writing demonstrates characteristic fluctuations in linguistic complexity, whereas AI-generated text often maintains unnaturally consistent structural patterns throughout extended passages.`;
+            inputText.value = sample;
+            charCount.textContent = `${sample.length.toLocaleString()} characters`;
+        }
+
+        function analyzeText() {
+            const text = inputText.value.trim();
+            if (!text || text.length < 50) {
+                alert('Please enter at least 50 characters for analysis.');
+                return;
+            }
+
+            analyzeBtn.classList.add('analyzing');
+            analyzeBtn.querySelector('.btn-text').textContent = 'Analyzing...';
+            detectorBox.classList.add('scanning');
+            resultsPanel.classList.remove('active');
+
+            setTimeout(() => {
+                const result = performAnalysis(text);
+                displayResults(result);
+                analyzeBtn.classList.remove('analyzing');
+                analyzeBtn.querySelector('.btn-text').textContent = 'Analyze Content';
+                detectorBox.classList.remove('scanning');
+            }, 2000 + Math.random() * 1000);
+        }
+
+        function performAnalysis(text) {
+            const words = text.split(/\\s+/).length;
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim()).length;
+            const avgWordLength = text.replace(/\\s/g, '').length / words;
+            const avgSentenceLength = words / sentences;
+            
+            // Simulated detection metrics
+            const perplexity = Math.max(10, 150 - avgSentenceLength * 3 + Math.random() * 30);
+            const burstiness = Math.min(1, 0.3 + (Math.random() * 0.4));
+            const coherence = Math.min(1, 0.7 + (Math.random() * 0.25));
+            const ngramScore = Math.min(1, 0.2 + (Math.random() * 0.5));
+            
+            // AI probability calculation (simulated)
+            const aiProb = Math.min(0.99, Math.max(0.01, 
+                (perplexity < 50 ? 0.8 : 0.3) + 
+                (burstiness < 0.4 ? 0.15 : -0.1) + 
+                (coherence > 0.9 ? 0.1 : 0) +
+                (ngramScore > 0.5 ? 0.1 : 0) +
+                (Math.random() * 0.1 - 0.05)
+            ));
+
+            return {
+                aiProbability: aiProb,
+                perplexity: perplexity,
+                burstiness: burstiness,
+                coherence: coherence,
+                ngramScore: ngramScore,
+                wordCount: words,
+                sentenceCount: sentences,
+                avgWordLength: avgWordLength,
+                avgSentenceLength: avgSentenceLength,
+                processTime: (Math.random() * 0.5 + 0.1).toFixed(2)
+            };
+        }
+
+        function displayResults(result) {
+            const scorePercent = Math.round(result.aiProbability * 100);
+            document.getElementById('scoreText').textContent = scorePercent + '%';
+            document.getElementById('scoreLabel').textContent = scorePercent > 70 ? 'AI Generated' : scorePercent > 40 ? 'Mixed Content' : 'Human Written';
+            document.getElementById('processTime').textContent = result.processTime;
+            
+            const circumference = 2 * Math.PI * 54;
+            const offset = circumference - (scorePercent / 100) * circumference;
+            document.getElementById('scoreProgress').style.strokeDashoffset = offset;
+
+            const details = [
+                { label: 'Perplexity Score', value: result.perplexity.toFixed(1), percent: Math.min(100, result.perplexity) },
+                { label: 'Burstiness Index', value: (result.burstiness * 100).toFixed(1) + '%', percent: result.burstiness * 100 },
+                { label: 'Coherence Score', value: (result.coherence * 100).toFixed(1) + '%', percent: result.coherence * 100 },
+                { label: 'N-gram Match', value: (result.ngramScore * 100).toFixed(1) + '%', percent: result.ngramScore * 100 },
+                { label: 'Word Count', value: result.wordCount.toLocaleString(), percent: Math.min(100, result.wordCount / 10) },
+                { label: 'Avg Sentence Length', value: result.avgSentenceLength.toFixed(1), percent: Math.min(100, result.avgSentenceLength * 2) }
+            ];
+
+            const detailsContainer = document.getElementById('resultsDetails');
+            detailsContainer.innerHTML = details.map((d, i) => `
+                <div class="detail-item" style="animation: fadeInUp 0.4s ${i * 0.1}s both;">
+                    <div class="detail-label">${d.label}</div>
+                    <div class="detail-value">${d.value}</div>
+                    <div class="detail-bar">
+                        <div class="detail-bar-fill" style="width: ${d.percent}%"></div>
+                    </div>
+                </div>
+            `).join('');
+
+            resultsPanel.classList.add('active');
+            resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // ========== TABS ==========
+        document.querySelectorAll('.detector-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.detector-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        // ========== SCROLL FUNCTIONS ==========
+        function scrollToDetect() {
+            document.getElementById('detect').scrollIntoView({ behavior: 'smooth' });
+        }
+        function scrollToApi() {
+            document.getElementById('api').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ========== GSAP ANIMATIONS ==========
+        gsap.registerPlugin(ScrollTrigger);
+
+        gsap.from('.hero-badge', {
+            opacity: 0,
+            y: 30,
+            duration: 1,
+            delay: 2,
+            ease: 'power3.out'
+        });
+
+        gsap.from('.hero h1', {
+            opacity: 0,
+            y: 50,
+            duration: 1.2,
+            delay: 2.2,
+            ease: 'power3.out'
+        });
+
+        gsap.from('.hero p', {
+            opacity: 0,
+            y: 30,
+            duration: 1,
+            delay: 2.4,
+            ease: 'power3.out'
+        });
+
+        gsap.from('.hero-cta', {
+            opacity: 0,
+            y: 20,
+            duration: 0.8,
+            delay: 2.6,
+            ease: 'power3.out'
+        });
+
+        gsap.utils.toArray('.feature-card').forEach((card, i) => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 85%',
+                    toggleActions: 'play none none none'
+                },
+                opacity: 0,
+                y: 40,
+                duration: 0.8,
+                delay: i * 0.1,
+                ease: 'power3.out'
+            });
+        });
+
+        gsap.utils.toArray('.pricing-card').forEach((card, i) => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 85%',
+                    toggleActions: 'play none none none'
+                },
+                opacity: 0,
+                y: 50,
+                duration: 0.8,
+                delay: i * 0.15,
+                ease: 'power3.out'
+            });
+        });
+
+        // Stat counter animation
+        gsap.utils.toArray('.stat-item').forEach(item => {
+            const valueEl = item.querySelector('.stat-value');
+            const target = parseFloat(valueEl.dataset.count);
+            
+            ScrollTrigger.create({
+                trigger: item,
+                start: 'top 85%',
+                onEnter: () => {
+                    gsap.to({ val: 0 }, {
+                        val: target,
+                        duration: 2,
+                        ease: 'power2.out',
+                        onUpdate: function() {
+                            valueEl.textContent = this.targets()[0].val.toFixed(1).replace(/\\.0$/, '');
+                        }
+                    });
+                },
+                once: true
+            });
+        });
+
+        // Nav background on scroll
+        ScrollTrigger.create({
+            start: 'top -100',
+            onUpdate: (self) => {
+                if (self.direction === 1 && self.scroll() > 100) {
+                    document.querySelector('nav').style.borderColor = 'var(--border-hover)';
+                } else if (self.scroll() < 100) {
+                    document.querySelector('nav').style.borderColor = 'var(--border)';
+                }
+            }
+        });
+
+        // ========== KEYBOARD SHORTCUTS ==========
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeSettings();
+            if (e.ctrlKey && e.key === 'Enter') analyzeText();
+            if (e.ctrlKey && e.key === ',') { e.preventDefault(); openSettings(); }
+        });
     </script>
 </body>
-</html>'''
-
-# Write to file
-with open('/mnt/agents/output/sentinel_ai_detector.html', 'w', encoding='utf-8') as f:
-    f.write(html_content)
-
-print("File saved successfully!")
-print(f"File size: {len(html_content):,} characters")
-print(f"Lines of code: {html_content.count(chr(10)):,}")
+</html>
