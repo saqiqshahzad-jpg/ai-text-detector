@@ -1,96 +1,158 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="obsidian">
+
+html_content = '''<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>detect — AI Text Identifier</title>
+    <title>Sentinel AI — Text Detection Intelligence</title>
+    <meta name="description" content="Professional AI text detection SaaS platform. Detect synthetic content with precision.">
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     
     <style>
         :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #111118;
+            --bg-tertiary: #16161f;
+            --bg-card: #13131a;
+            --bg-hover: #1a1a25;
+            --text-primary: #f0f0f5;
+            --text-secondary: #8a8a9a;
+            --text-tertiary: #5a5a6a;
+            --accent: #00d4ff;
+            --accent-secondary: #7c3aed;
+            --accent-glow: rgba(0, 212, 255, 0.15);
+            --border: rgba(255, 255, 255, 0.06);
+            --border-strong: rgba(255, 255, 255, 0.12);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --selection-bg: rgba(0, 212, 255, 0.25);
+            --selection-color: #f0f0f5;
+            --font-primary: 'Inter', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
-            --font-sans: 'Space Grotesk', sans-serif;
+            --font-display: 'Space Grotesk', sans-serif;
             --cursor-size: 12px;
-            --cursor-hover: 48px;
-            --transition: cubic-bezier(0.16, 1, 0.3, 1);
+            --cursor-trail: 8;
+            --transition: cubic-bezier(0.23, 1, 0.32, 1);
+            --grain-opacity: 0.03;
         }
 
-        /* Theme: Obsidian */
-        [data-theme="obsidian"] {
-            --bg: #0a0a0a;
-            --bg-mat: #111111;
-            --surface: #161616;
-            --text: #e0e0e0;
-            --text-muted: #666666;
-            --accent: #ffffff;
-            --accent-soft: rgba(255,255,255,0.08);
-            --selection: rgba(255,255,255,0.15);
-            --selection-text: #ffffff;
-            --border: rgba(255,255,255,0.06);
-            --shadow: rgba(0,0,0,0.8);
-            --glow: rgba(255,255,255,0.03);
+        /* Theme: Light */
+        [data-theme="light"] {
+            --bg-primary: #fafafa;
+            --bg-secondary: #f0f0f5;
+            --bg-tertiary: #e8e8f0;
+            --bg-card: #ffffff;
+            --bg-hover: #f5f5fa;
+            --text-primary: #0a0a0f;
+            --text-secondary: #6a6a7a;
+            --text-tertiary: #9a9aaa;
+            --accent: #0066ff;
+            --accent-secondary: #7c3aed;
+            --accent-glow: rgba(0, 102, 255, 0.12);
+            --border: rgba(0, 0, 0, 0.06);
+            --border-strong: rgba(0, 0, 0, 0.12);
+            --selection-bg: rgba(0, 102, 255, 0.2);
+            --selection-color: #0a0a0f;
+            --grain-opacity: 0.02;
         }
 
-        /* Theme: Alabaster */
-        [data-theme="alabaster"] {
-            --bg: #f5f5f0;
-            --bg-mat: #ebebe5;
-            --surface: #ffffff;
-            --text: #1a1a1a;
-            --text-muted: #999999;
-            --accent: #000000;
-            --accent-soft: rgba(0,0,0,0.04);
-            --selection: rgba(0,0,0,0.12);
-            --selection-text: #000000;
-            --border: rgba(0,0,0,0.06);
-            --shadow: rgba(0,0,0,0.04);
-            --glow: rgba(0,0,0,0.02);
-        }
-
-        /* Theme: Sage */
-        [data-theme="sage"] {
-            --bg: #1a1f1c;
-            --bg-mat: #222a25;
-            --surface: #2a332d;
-            --text: #d4ddd6;
-            --text-muted: #5a6b5f;
-            --accent: #8fbc8f;
-            --accent-soft: rgba(143,188,143,0.08);
-            --selection: rgba(143,188,143,0.2);
-            --selection-text: #a8d5a8;
-            --border: rgba(143,188,143,0.08);
-            --shadow: rgba(0,0,0,0.6);
-            --glow: rgba(143,188,143,0.03);
-        }
-
-        /* Theme: Void */
-        [data-theme="void"] {
-            --bg: #000000;
-            --bg-mat: #050505;
-            --surface: #0a0a0a;
-            --text: #333333;
-            --text-muted: #222222;
+        /* Theme: Matrix */
+        [data-theme="matrix"] {
+            --bg-primary: #000000;
+            --bg-secondary: #050a05;
+            --bg-tertiary: #0a150a;
+            --bg-card: #081008;
+            --bg-hover: #0d1a0d;
+            --text-primary: #e0ffe0;
+            --text-secondary: #5a8a5a;
+            --text-tertiary: #3a6a3a;
             --accent: #00ff41;
-            --accent-soft: rgba(0,255,65,0.06);
-            --selection: rgba(0,255,65,0.25);
-            --selection-text: #00ff41;
-            --border: rgba(0,255,65,0.1);
-            --shadow: rgba(0,0,0,0.9);
-            --glow: rgba(0,255,65,0.05);
+            --accent-secondary: #00cc33;
+            --accent-glow: rgba(0, 255, 65, 0.15);
+            --border: rgba(0, 255, 65, 0.08);
+            --border-strong: rgba(0, 255, 65, 0.15);
+            --selection-bg: rgba(0, 255, 65, 0.25);
+            --selection-color: #e0ffe0;
+            --grain-opacity: 0.04;
+        }
+
+        /* Theme: Midnight */
+        [data-theme="midnight"] {
+            --bg-primary: #0f0a1a;
+            --bg-secondary: #151020;
+            --bg-tertiary: #1a1528;
+            --bg-card: #18122b;
+            --bg-hover: #201830;
+            --text-primary: #f0e6ff;
+            --text-secondary: #8a7aaa;
+            --text-tertiary: #6a5a8a;
+            --accent: #c084fc;
+            --accent-secondary: #a855f7;
+            --accent-glow: rgba(192, 132, 252, 0.15);
+            --border: rgba(192, 132, 252, 0.06);
+            --border-strong: rgba(192, 132, 252, 0.12);
+            --selection-bg: rgba(192, 132, 252, 0.25);
+            --selection-color: #f0e6ff;
+            --grain-opacity: 0.03;
+        }
+
+        /* Theme: Warm */
+        [data-theme="warm"] {
+            --bg-primary: #1a1510;
+            --bg-secondary: #201a15;
+            --bg-tertiary: #282018;
+            --bg-card: #231c15;
+            --bg-hover: #2a2218;
+            --text-primary: #f5e6d0;
+            --text-secondary: #a09080;
+            --text-tertiary: #7a6a5a;
+            --accent: #ff9f43;
+            --accent-secondary: #ee5a24;
+            --accent-glow: rgba(255, 159, 67, 0.15);
+            --border: rgba(255, 159, 67, 0.06);
+            --border-strong: rgba(255, 159, 67, 0.12);
+            --selection-bg: rgba(255, 159, 67, 0.25);
+            --selection-color: #f5e6d0;
+            --grain-opacity: 0.03;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            cursor: none;
         }
 
         ::selection {
-            background: var(--selection);
-            color: var(--selection-text);
+            background: var(--selection-bg);
+            color: var(--selection-color);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-tertiary);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
         }
 
         html {
@@ -98,54 +160,120 @@
         }
 
         body {
-            font-family: var(--font-mono);
-            background: var(--bg);
-            color: var(--text);
+            font-family: var(--font-primary);
+            background: var(--bg-primary);
+            color: var(--text-primary);
             overflow-x: hidden;
-            transition: background 0.8s var(--transition), color 0.8s var(--transition);
-            min-height: 100vh;
+            cursor: none;
             line-height: 1.6;
-            font-weight: 300;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Custom Cursor */
-        .cursor {
+        /* Grain Overlay */
+        .grain-overlay {
             position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: var(--grain-opacity);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Custom Cursor System */
+        .cursor-system {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 99999;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-main {
             width: var(--cursor-size);
             height: var(--cursor-size);
-            background: var(--accent);
             border-radius: 50%;
+            background: var(--accent);
+            position: fixed;
             pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: difference;
-            transition: width 0.4s var(--transition), 
-                        height 0.4s var(--transition),
-                        background 0.4s var(--transition),
-                        transform 0.15s ease-out;
+            z-index: 99999;
             transform: translate(-50%, -50%);
+            transition: width 0.3s var(--transition), height 0.3s var(--transition), background 0.3s;
+            mix-blend-mode: difference;
         }
 
-        .cursor.hover {
-            width: var(--cursor-hover);
-            height: var(--cursor-hover);
-            mix-blend-mode: normal;
+        .cursor-main.hovering {
+            width: 48px;
+            height: 48px;
             background: transparent;
-            border: 1px solid var(--accent);
+            border: 2px solid var(--accent);
+            mix-blend-mode: difference;
+        }
+
+        .cursor-main.clicking {
+            transform: translate(-50%, -50%) scale(0.8);
         }
 
         .cursor-trail {
             position: fixed;
-            width: 4px;
-            height: 4px;
-            background: var(--accent);
-            border-radius: 50%;
             pointer-events: none;
-            z-index: 9998;
+            z-index: 99998;
+            border-radius: 50%;
+            background: var(--accent);
             opacity: 0.3;
-            transition: opacity 0.5s ease;
+            transform: translate(-50%, -50%);
         }
 
-        /* 3D Canvas Background */
+        .cursor-ring {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99997;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s var(--transition), height 0.5s var(--transition), border-color 0.3s;
+        }
+
+        .cursor-ring.hovering {
+            width: 64px;
+            height: 64px;
+            border-color: var(--accent-secondary);
+        }
+
+        /* Cursor Modes */
+        [data-cursor="ghost"] .cursor-main {
+            background: transparent;
+            border: 2px solid var(--accent);
+            mix-blend-mode: normal;
+        }
+
+        [data-cursor="matrix"] .cursor-main {
+            width: 16px;
+            height: 16px;
+            border-radius: 0;
+            background: var(--accent);
+            mix-blend-mode: normal;
+        }
+
+        [data-cursor="glitch"] .cursor-main {
+            animation: cursorGlitch 0.3s infinite;
+        }
+
+        @keyframes cursorGlitch {
+            0%, 100% { transform: translate(-50%, -50%) translate(0, 0); }
+            20% { transform: translate(-50%, -50%) translate(-2px, 2px); }
+            40% { transform: translate(-50%, -50%) translate(2px, -2px); }
+            60% { transform: translate(-50%, -50%) translate(-1px, -1px); }
+            80% { transform: translate(-50%, -50%) translate(1px, 1px); }
+        }
+
+        /* 3D Canvas */
         #canvas-container {
             position: fixed;
             top: 0;
@@ -154,56 +282,147 @@
             height: 100%;
             z-index: 0;
             pointer-events: none;
-            opacity: 0.4;
         }
 
-        canvas {
-            display: block;
+        #bg-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            z-index: 100000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: opacity 0.8s var(--transition), visibility 0.8s;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loading-text {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            color: var(--text-tertiary);
+            margin-top: 2rem;
+            text-transform: uppercase;
+        }
+
+        .loading-bar {
+            width: 120px;
+            height: 2px;
+            background: var(--bg-tertiary);
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+            border-radius: 2px;
+        }
+
+        .loading-bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s var(--transition);
+        }
+
+        .loading-logo {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .loading-logo span {
+            color: var(--accent);
         }
 
         /* Navigation */
-        nav {
+        .navbar {
             position: fixed;
             top: 0;
+            left: 0;
             width: 100%;
-            padding: 2rem 4rem;
+            z-index: 1000;
+            padding: 1.5rem 3rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 100;
-            mix-blend-mode: difference;
+            transition: all 0.4s var(--transition);
+            border-bottom: 1px solid transparent;
         }
 
-        .logo {
-            font-family: var(--font-sans);
-            font-size: 1.2rem;
+        .navbar.scrolled {
+            background: rgba(var(--bg-primary-rgb, 10, 10, 15), 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 3rem;
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
             font-weight: 700;
-            letter-spacing: -0.02em;
-            color: var(--accent);
+            color: var(--text-primary);
             text-decoration: none;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--bg-primary);
+            font-weight: 700;
         }
 
         .nav-links {
             display: flex;
-            gap: 3rem;
-            list-style: none;
+            gap: 2.5rem;
+            align-items: center;
         }
 
-        .nav-links a {
-            color: var(--text);
+        .nav-link {
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
             text-decoration: none;
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            opacity: 0.6;
-            transition: opacity 0.4s var(--transition);
+            letter-spacing: 0.05em;
+            transition: color 0.3s;
             position: relative;
+            padding: 0.25rem 0;
+            text-transform: uppercase;
         }
 
-        .nav-links a::after {
+        .nav-link::after {
             content: '';
             position: absolute;
-            bottom: -4px;
+            bottom: 0;
             left: 0;
             width: 0;
             height: 1px;
@@ -211,43 +430,127 @@
             transition: width 0.4s var(--transition);
         }
 
-        .nav-links a:hover {
-            opacity: 1;
+        .nav-link:hover {
+            color: var(--text-primary);
         }
 
-        .nav-links a:hover::after {
+        .nav-link:hover::after {
             width: 100%;
         }
 
-        .theme-toggle {
+        .nav-actions {
             display: flex;
-            gap: 0.5rem;
+            gap: 1rem;
             align-items: center;
         }
 
-        .theme-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            border: 1px solid var(--text-muted);
+        .btn {
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-strong);
             background: transparent;
+            color: var(--text-primary);
+            cursor: none;
             transition: all 0.4s var(--transition);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
             position: relative;
             overflow: hidden;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
-        .theme-dot.active {
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.6s var(--transition);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
             background: var(--accent);
+            color: var(--bg-primary);
             border-color: var(--accent);
-            transform: scale(1.3);
+            font-weight: 600;
         }
 
-        .theme-dot:hover {
-            border-color: var(--accent);
+        .btn-primary:hover {
+            background: var(--text-primary);
+            border-color: var(--text-primary);
+            box-shadow: 0 0 30px var(--accent-glow);
+        }
+
+        .btn-ghost {
+            border-color: transparent;
+            color: var(--text-secondary);
+        }
+
+        .btn-ghost:hover {
+            color: var(--text-primary);
+            background: var(--bg-hover);
+            border-color: var(--border);
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: none;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu-btn span {
+            width: 24px;
+            height: 1.5px;
+            background: var(--text-primary);
+            transition: all 0.3s var(--transition);
+            transform-origin: center;
+        }
+
+        .mobile-menu-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
         }
 
         /* Main Content */
-        main {
+        .main-content {
             position: relative;
             z-index: 1;
         }
@@ -256,266 +559,452 @@
         .hero {
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            padding: 0 2rem;
+            justify-content: center;
+            padding: 8rem 3rem 4rem;
             position: relative;
         }
 
-        .hero-label {
-            font-size: 0.7rem;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 1s var(--transition) forwards;
+        .hero-content {
+            max-width: 900px;
+            text-align: center;
+            position: relative;
         }
 
-        .hero h1 {
-            font-family: var(--font-sans);
-            font-size: clamp(3rem, 10vw, 8rem);
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 8vw, 6rem);
             font-weight: 700;
-            letter-spacing: -0.04em;
-            line-height: 1;
-            text-align: center;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
             margin-bottom: 1.5rem;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeUp 1s 0.2s var(--transition) forwards;
+            color: var(--text-primary);
+        }
+
+        .hero-title .accent-text {
+            color: var(--accent);
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-title .accent-text::after {
+            content: '';
+            position: absolute;
+            bottom: 0.1em;
+            left: 0;
+            width: 100%;
+            height: 0.1em;
+            background: var(--accent);
+            opacity: 0.3;
+            border-radius: 2px;
         }
 
         .hero-subtitle {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            max-width: 400px;
-            text-align: center;
-            margin-bottom: 4rem;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 1s 0.4s var(--transition) forwards;
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            line-height: 1.7;
+            font-weight: 400;
         }
 
-        /* Detector Input */
-        .detector-container {
-            width: 100%;
-            max-width: 700px;
-            position: relative;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeUp 1s 0.6s var(--transition) forwards;
-        }
-
-        .input-wrapper {
-            position: relative;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 2px;
-            padding: 2rem;
-            transition: all 0.6s var(--transition);
-        }
-
-        .input-wrapper:focus-within {
-            border-color: var(--accent);
-            box-shadow: 0 0 60px var(--glow);
-        }
-
-        .input-wrapper label {
-            display: block;
-            font-size: 0.65rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-        }
-
-        #textInput {
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: var(--text);
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-            line-height: 1.8;
-            resize: none;
-            outline: none;
-            min-height: 120px;
-        }
-
-        #textInput::placeholder {
-            color: var(--text-muted);
-            opacity: 0.5;
-        }
-
-        .input-actions {
+        .hero-actions {
             display: flex;
-            justify-content: space-between;
+            gap: 1rem;
+            justify-content: center;
             align-items: center;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
         }
 
-        .char-count {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .analyze-btn {
-            background: var(--accent);
-            color: var(--bg);
-            border: none;
-            padding: 0.8rem 2.5rem;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            font-weight: 500;
-            cursor: none;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s var(--transition);
-        }
-
-        .analyze-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px var(--shadow);
-        }
-
-        .analyze-btn:active {
-            transform: translateY(0);
-        }
-
-        .analyze-btn.processing {
-            pointer-events: none;
-            opacity: 0.7;
-        }
-
-        /* Results */
-        .result-container {
-            margin-top: 2rem;
-            padding: 2rem;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 2px;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s var(--transition);
-            display: none;
-        }
-
-        .result-container.visible {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .result-header {
+        .hero-stats {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .result-label {
-            font-size: 0.65rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-        }
-
-        .confidence-score {
-            font-family: var(--font-sans);
-            font-size: 3rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            line-height: 1;
-        }
-
-        .confidence-bar {
-            width: 100%;
-            height: 2px;
-            background: var(--accent-soft);
-            margin: 1.5rem 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .confidence-fill {
-            height: 100%;
-            background: var(--accent);
-            transition: width 2s var(--transition);
-            width: 0%;
-        }
-
-        .result-meta {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-top: 2rem;
+            gap: 3rem;
+            justify-content: center;
+            margin-top: 4rem;
             padding-top: 2rem;
             border-top: 1px solid var(--border);
         }
 
-        .meta-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+        .hero-stat {
+            text-align: center;
         }
 
-        .meta-label {
-            font-size: 0.65rem;
+        .hero-stat-value {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .hero-stat-label {
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            color: var(--text-tertiary);
+            margin-top: 0.5rem;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-            color: var(--text-muted);
         }
 
-        .meta-value {
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        /* Features Section */
-        .features {
-            padding: 10rem 4rem;
-            max-width: 1200px;
-            margin: 0 auto;
+        /* Section Styles */
+        .section {
+            padding: 8rem 3rem;
+            position: relative;
         }
 
         .section-header {
-            margin-bottom: 6rem;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+            text-align: center;
         }
 
-        .section-header h2 {
-            font-family: var(--font-sans);
-            font-size: clamp(2rem, 5vw, 4rem);
+        .section-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3.5rem);
             font-weight: 700;
-            letter-spacing: -0.03em;
+            letter-spacing: -0.02em;
             line-height: 1.1;
             margin-bottom: 1rem;
         }
 
-        .section-header p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            max-width: 500px;
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            line-height: 1.7;
         }
 
+        /* Detector Section */
+        .detector-section {
+            padding: 4rem 3rem 8rem;
+        }
+
+        .detector-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .detector-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .detector-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0.5;
+        }
+
+        .detector-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .detector-title {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .detector-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .detector-textarea {
+            width: 100%;
+            min-height: 200px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            font-family: var(--font-mono);
+            font-size: 0.9375rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+            resize: vertical;
+            transition: all 0.3s;
+            outline: none;
+            cursor: none;
+        }
+
+        .detector-textarea::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .detector-textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .detector-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .detector-info {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .detector-info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Results Panel */
+        .results-panel {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: none;
+        }
+
+        .results-panel.active {
+            display: block;
+            animation: fadeInUp 0.6s var(--transition);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .results-title {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .results-score {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .score-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 3px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: var(--accent);
+            transform: rotate(-90deg);
+            transition: transform 1.5s var(--transition);
+        }
+
+        .score-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .score-value {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .results-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .breakdown-item {
+            padding: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .breakdown-label {
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            color: var(--text-tertiary);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .breakdown-bar {
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .breakdown-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 1.5s var(--transition);
+            width: 0%;
+        }
+
+        .breakdown-value {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-bar {
+            height: 2px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+            width: 0%;
+            transition: width 0.3s;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -2px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .progress-text {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Features Grid */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1px;
-            background: var(--border);
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .feature-card {
-            background: var(--bg);
-            padding: 3rem;
-            transition: all 0.6s var(--transition);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.5s var(--transition);
             position: relative;
             overflow: hidden;
+            cursor: none;
         }
 
         .feature-card::before {
@@ -524,1026 +1013,2239 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: var(--accent-soft);
-            opacity: 0;
-            transition: opacity 0.6s var(--transition);
-        }
-
-        .feature-card:hover::before {
-            opacity: 1;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s var(--transition);
         }
 
         .feature-card:hover {
+            border-color: var(--border-strong);
             transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
 
-        .feature-number {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-            display: block;
+        .feature-card:hover::before {
+            transform: scaleX(1);
         }
 
-        .feature-card h3 {
-            font-family: var(--font-sans);
-            font-size: 1.3rem;
-            font-weight: 500;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
         }
 
-        .feature-card p {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            line-height: 1.8;
-            position: relative;
-            z-index: 1;
+        .feature-card:hover .feature-icon {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .feature-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .feature-desc {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.6;
         }
 
         /* Pricing */
-        .pricing {
-            padding: 10rem 4rem;
-            background: var(--bg-mat);
-        }
-
         .pricing-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1px;
-            max-width: 1000px;
-            margin: 4rem auto 0;
-            background: var(--border);
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            align-items: start;
         }
 
         .pricing-card {
-            background: var(--bg);
-            padding: 3rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
             position: relative;
-            transition: all 0.6s var(--transition);
+            transition: all 0.5s var(--transition);
         }
 
-        .pricing-card.featured {
-            background: var(--surface);
+        .pricing-card.popular {
+            border-color: var(--accent);
+            transform: scale(1.05);
+            box-shadow: 0 0 40px var(--accent-glow);
         }
 
-        .pricing-card.featured::before {
-            content: 'Popular';
+        .pricing-card.popular::before {
+            content: 'Most Popular';
             position: absolute;
-            top: 0;
-            right: 2rem;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
             background: var(--accent);
-            color: var(--bg);
-            font-size: 0.6rem;
-            letter-spacing: 0.2em;
+            color: var(--bg-primary);
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            padding: 0.25rem 1rem;
+            border-radius: 100px;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
-            padding: 0.5rem 1rem;
-            font-weight: 500;
+            font-weight: 600;
         }
 
         .pricing-card:hover {
+            border-color: var(--border-strong);
             transform: translateY(-8px);
-            box-shadow: 0 20px 60px var(--shadow);
-            z-index: 2;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
         }
 
-        .plan-name {
-            font-size: 0.7rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
+        .pricing-card.popular:hover {
+            transform: scale(1.05) translateY(-8px);
         }
 
-        .plan-price {
-            font-family: var(--font-sans);
-            font-size: 3rem;
+        .pricing-name {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
             font-weight: 700;
-            letter-spacing: -0.03em;
             margin-bottom: 0.5rem;
         }
 
-        .plan-price span {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-weight: 400;
+        .pricing-desc {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            margin-bottom: 2rem;
         }
 
-        .plan-features {
-            list-style: none;
-            margin: 2rem 0;
-            padding: 2rem 0;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
+        .pricing-price {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
         }
 
-        .plan-features li {
-            font-size: 0.8rem;
-            padding: 0.8rem 0;
-            color: var(--text-muted);
-            position: relative;
-            padding-left: 1.5rem;
+        .pricing-price span {
+            font-size: 1.25rem;
+            color: var(--text-tertiary);
+            margin-right: 0.25rem;
+            font-weight: 500;
         }
 
-        .plan-features li::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: var(--accent);
-        }
-
-        .plan-cta {
-            width: 100%;
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 1rem;
+        .pricing-period {
             font-family: var(--font-mono);
-            font-size: 0.75rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            cursor: none;
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-features li::before {
+            content: '→';
+            color: var(--accent);
+            font-family: var(--font-mono);
+            font-weight: 700;
+        }
+
+        .pricing-features li.included::before {
+            content: '✓';
+        }
+
+        .pricing-features li.not-included {
+            opacity: 0.4;
+        }
+
+        .pricing-features li.not-included::before {
+            content: '×';
+            color: var(--text-tertiary);
+        }
+
+        /* How It Works */
+        .steps-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .step {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--accent);
+            font-weight: 700;
+            width: 48px;
+            height: 48px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            background: var(--bg-card);
+        }
+
+        .step-number::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: calc(100% + 3rem);
+            background: var(--border);
+        }
+
+        .step:last-child .step-number::after {
+            display: none;
+        }
+
+        .step-content {
+            padding-top: 0.5rem;
+        }
+
+        .step-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-desc {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Testimonials */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .testimonial-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
             transition: all 0.4s var(--transition);
         }
 
-        .plan-cta:hover {
-            background: var(--accent);
-            color: var(--bg);
-            border-color: var(--accent);
+        .testimonial-card:hover {
+            border-color: var(--border-strong);
+            transform: translateY(-4px);
         }
 
-        .pricing-card.featured .plan-cta {
-            background: var(--accent);
-            color: var(--bg);
-            border-color: var(--accent);
+        .testimonial-quote {
+            font-size: 1.125rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            font-style: italic;
         }
 
-        .pricing-card.featured .plan-cta:hover {
-            opacity: 0.9;
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .testimonial-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .testimonial-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .testimonial-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9375rem;
+        }
+
+        .testimonial-role {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Settings Panel */
+        .settings-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s var(--transition);
+            backdrop-filter: blur(4px);
+        }
+
+        .settings-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 420px;
+            max-width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            border-left: 1px solid var(--border);
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.5s var(--transition);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .settings-panel.active {
+            transform: translateX(0);
+        }
+
+        .settings-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--bg-primary);
+            z-index: 10;
+        }
+
+        .settings-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .settings-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: none;
+            transition: all 0.3s;
+            font-size: 1.25rem;
+        }
+
+        .settings-close:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .settings-body {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .settings-group {
+            margin-bottom: 2.5rem;
+        }
+
+        .settings-group-title {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .settings-group-title::before {
+            content: '//';
+            color: var(--accent);
+        }
+
+        .theme-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .theme-option {
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: none;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .theme-option:hover {
+            border-color: var(--border-strong);
+            background: var(--bg-hover);
+        }
+
+        .theme-option.active {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        .theme-preview {
+            width: 100%;
+            height: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .theme-name {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .font-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .font-option {
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: none;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .font-option:hover {
+            border-color: var(--border-strong);
+            background: var(--bg-hover);
+        }
+
+        .font-option.active {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        .font-sample {
+            font-size: 1.125rem;
+            color: var(--text-primary);
+        }
+
+        .font-name {
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .cursor-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .cursor-option {
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: none;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .cursor-option:hover {
+            border-color: var(--border-strong);
+            background: var(--bg-hover);
+        }
+
+        .cursor-option.active {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        .cursor-option-name {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.5rem;
+        }
+
+        .slider-control {
+            margin-bottom: 1.5rem;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .slider-input {
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--bg-tertiary);
+            outline: none;
+            -webkit-appearance: none;
+            cursor: none;
+        }
+
+        .slider-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: none;
+            box-shadow: 0 0 10px var(--accent-glow);
+            border: 2px solid var(--bg-primary);
+        }
+
+        .slider-input::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: none;
+            border: 2px solid var(--bg-primary);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .toggle-control {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .toggle-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .toggle-switch {
+            width: 48px;
+            height: 24px;
+            border-radius: 12px;
+            background: var(--bg-tertiary);
+            position: relative;
+            cursor: none;
+            transition: background 0.3s;
+            border: 1px solid var(--border);
+        }
+
+        .toggle-switch.active {
+            background: var(--accent);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--text-primary);
+            transition: transform 0.3s var(--transition);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(24px);
+            background: var(--bg-primary);
+        }
+
+        .settings-footer {
+            padding: 2rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .settings-footer .btn {
+            flex: 1;
         }
 
         /* Footer */
-        footer {
-            padding: 6rem 4rem;
+        .footer {
+            padding: 4rem 3rem 2rem;
             border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
+            position: relative;
         }
 
-        .footer-left {
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto 4rem;
+        }
+
+        .footer-brand {
             display: flex;
             flex-direction: column;
             gap: 1rem;
         }
 
         .footer-logo {
-            font-family: var(--font-sans);
+            font-family: var(--font-display);
             font-size: 1.5rem;
             font-weight: 700;
-            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .footer-copy {
+        .footer-desc {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            max-width: 300px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .footer-social a {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: none;
+            font-size: 0.875rem;
+        }
+
+        .footer-social a:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-glow);
+        }
+
+        .footer-column h4 {
+            font-family: var(--font-mono);
             font-size: 0.75rem;
-            color: var(--text-muted);
+            color: var(--text-tertiary);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
         }
 
         .footer-links {
-            display: flex;
-            gap: 3rem;
             list-style: none;
         }
 
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
         .footer-links a {
-            color: var(--text-muted);
+            color: var(--text-secondary);
             text-decoration: none;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-            transition: color 0.4s var(--transition);
+            font-size: 0.9375rem;
+            transition: color 0.3s;
+            cursor: none;
         }
 
         .footer-links a:hover {
             color: var(--accent);
         }
 
-        /* Animations */
-        @keyframes fadeUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.6; }
+        .footer-copyright {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(2deg); }
+        .footer-legal {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-legal a {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            text-decoration: none;
+            transition: color 0.3s;
+            cursor: none;
+        }
+
+        .footer-legal a:hover {
+            color: var(--accent);
+        }
+
+        /* Keyboard Shortcut Hint */
+        .kbd {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.6875rem;
+            color: var(--text-tertiary);
+            min-width: 24px;
         }
 
         /* Scroll Reveal */
         .reveal {
             opacity: 0;
-            transform: translateY(40px);
-            transition: all 1s var(--transition);
+            transform: translateY(30px);
+            transition: all 0.8s var(--transition);
         }
 
-        .reveal.visible {
+        .reveal.active {
             opacity: 1;
             transform: translateY(0);
         }
 
-        /* Loading Animation */
-        .loader {
-            display: inline-flex;
-            gap: 4px;
-            align-items: center;
-        }
-
-        .loader span {
-            width: 4px;
-            height: 4px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: loader 1.4s infinite ease-in-out both;
-        }
-
-        .loader span:nth-child(1) { animation-delay: -0.32s; }
-        .loader span:nth-child(2) { animation-delay: -0.16s; }
-
-        @keyframes loader {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
-
         /* Responsive */
-        @media (max-width: 768px) {
-            nav {
-                padding: 1.5rem 2rem;
+        @media (max-width: 1024px) {
+            .pricing-card.popular {
+                transform: scale(1);
             }
-            
+            .pricing-card.popular:hover {
+                transform: scale(1) translateY(-8px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem 1.5rem;
+            }
             .nav-links {
                 display: none;
             }
-            
-            .features, .pricing {
-                padding: 6rem 2rem;
+            .mobile-menu-btn {
+                display: flex;
             }
-            
-            .pricing-grid {
+            .hero {
+                padding: 6rem 1.5rem 3rem;
+            }
+            .section {
+                padding: 4rem 1.5rem;
+            }
+            .hero-stats {
+                gap: 1.5rem;
+                flex-wrap: wrap;
+            }
+            .features-grid,
+            .pricing-grid,
+            .testimonials-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .result-meta {
-                grid-template-columns: 1fr;
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
             }
-            
-            footer {
-                flex-direction: column;
-                gap: 3rem;
-                align-items: flex-start;
+            .settings-panel {
+                width: 100%;
+            }
+            .cursor-main, .cursor-trail, .cursor-ring {
+                display: none;
+            }
+            body {
+                cursor: auto;
+            }
+            .btn, .detector-textarea, .nav-link, a, .settings-close, .toggle-switch, .theme-option, .font-option, .cursor-option, .slider-input {
+                cursor: auto;
             }
         }
 
-        /* 3D Elements */
-        .floating-shapes {
+        @media (max-width: 480px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            .hero-actions .btn {
+                width: 100%;
+            }
+            .detector-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .detector-actions .btn {
+                width: 100%;
+            }
+        }
+
+        /* Mobile Menu Panel */
+        .mobile-menu {
             position: fixed;
             top: 0;
-            left: 0;
+            right: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-        }
-
-        .shape {
-            position: absolute;
-            opacity: 0.03;
-            transition: all 2s var(--transition);
-        }
-
-        .shape-1 {
-            width: 400px;
-            height: 400px;
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            top: 10%;
-            right: -100px;
-            animation: float 20s infinite ease-in-out;
-        }
-
-        .shape-2 {
-            width: 300px;
-            height: 300px;
-            border: 1px solid var(--accent);
-            top: 60%;
-            left: -100px;
-            transform: rotate(45deg);
-            animation: float 25s infinite ease-in-out reverse;
-        }
-
-        .shape-3 {
-            width: 200px;
-            height: 1px;
-            background: var(--accent);
-            top: 40%;
-            left: 50%;
-            animation: float 30s infinite ease-in-out;
-        }
-
-        /* Scanning Effect */
-        .scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--accent);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-
-        .input-wrapper.scanning .scan-line {
-            opacity: 0.5;
-            animation: scan 2s linear infinite;
-        }
-
-        @keyframes scan {
-            0% { top: 0; }
-            100% { top: 100%; }
-        }
-
-        /* Typing Indicator */
-        .typing-indicator {
-            display: none;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .typing-indicator.active {
+            background: var(--bg-primary);
+            z-index: 999;
+            transform: translateX(100%);
+            transition: transform 0.5s var(--transition);
             display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
         }
 
-        .typing-dot {
-            width: 4px;
-            height: 4px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes typing {
-            0%, 100% { opacity: 0.3; transform: translateY(0); }
-            50% { opacity: 1; transform: translateY(-4px); }
-        }
-
-        /* API Section */
-        .api-section {
-            padding: 10rem 4rem;
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .code-block {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 2px;
-            padding: 2rem;
-            margin-top: 3rem;
-            text-align: left;
-            overflow-x: auto;
-            position: relative;
-        }
-
-        .code-block::before {
-            content: 'curl';
-            position: absolute;
-            top: 1rem;
-            right: 1.5rem;
-            font-size: 0.6rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-        }
-
-        .code-block pre {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            line-height: 1.8;
-            color: var(--text-muted);
-            overflow-x: auto;
-        }
-
-        .code-block .token {
-            color: var(--accent);
-        }
-
-        .code-block .string {
-            color: var(--text);
-        }
-
-        .code-block .comment {
-            color: var(--text-muted);
-            opacity: 0.5;
-        }
-
-        /* Notification */
-        .notification {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 1.5rem 2rem;
-            font-size: 0.8rem;
-            z-index: 1000;
-            transform: translateX(120%);
-            transition: transform 0.6s var(--transition);
-            max-width: 300px;
-        }
-
-        .notification.show {
+        .mobile-menu.active {
             transform: translateX(0);
         }
 
-        .notification-title {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            display: block;
+        .mobile-menu a {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s;
         }
 
-        .notification-text {
-            color: var(--text-muted);
-            font-size: 0.75rem;
+        .mobile-menu a:hover {
+            color: var(--accent);
         }
 
-        /* Smooth scrollbar */
-        ::-webkit-scrollbar {
-            width: 4px;
+        /* Utility */
+        .text-accent { color: var(--accent); }
+        .text-secondary { color: var(--text-secondary); }
+        .text-tertiary { color: var(--text-tertiary); }
+        .font-mono { font-family: var(--font-mono); }
+        .font-display { font-family: var(--font-display); }
+
+        /* Animation Classes */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
 
-        ::-webkit-scrollbar-track {
-            background: var(--bg);
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--text-muted);
-            border-radius: 2px;
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
         }
 
-        /* Magnetic effect helper */
-        .magnetic {
-            transition: transform 0.3s var(--transition);
+        /* Divider */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            max-width: 1200px;
+            margin: 0 auto;
         }
     </style>
 </head>
-<body>
+<body data-theme="dark" data-cursor="default">
 
-    <!-- Custom Cursor -->
-    <div class="cursor" id="cursor"></div>
-    <div class="cursor-trail" id="trail1"></div>
-    <div class="cursor-trail" id="trail2"></div>
-    <div class="cursor-trail" id="trail3"></div>
-
-    <!-- 3D Floating Shapes -->
-    <div class="floating-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-logo">Sentinel<span>.</span></div>
+        <div class="loading-text">Initializing Neural Engine</div>
+        <div class="loading-bar">
+            <div class="loading-bar-fill" id="loading-bar-fill"></div>
+        </div>
     </div>
 
-    <!-- Canvas Background -->
+    <!-- Grain Overlay -->
+    <div class="grain-overlay"></div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-main" id="cursor-main"></div>
+    <div class="cursor-ring" id="cursor-ring"></div>
+    <div id="cursor-trails"></div>
+
+    <!-- 3D Background -->
     <div id="canvas-container">
-        <canvas id="bgCanvas"></canvas>
+        <canvas id="bg-canvas"></canvas>
     </div>
 
     <!-- Navigation -->
-    <nav>
-        <a href="#" class="logo magnetic">detect_</a>
-        <ul class="nav-links">
-            <li><a href="#features" class="magnetic">Features</a></li>
-            <li><a href="#pricing" class="magnetic">Pricing</a></li>
-            <li><a href="#api" class="magnetic">API</a></li>
-        </ul>
-        <div class="theme-toggle">
-            <button class="theme-dot active" data-theme="obsidian" title="Obsidian"></button>
-            <button class="theme-dot" data-theme="alabaster" title="Alabaster"></button>
-            <button class="theme-dot" data-theme="sage" title="Sage"></button>
-            <button class="theme-dot" data-theme="void" title="Void"></button>
+    <nav class="navbar" id="navbar">
+        <a href="#" class="nav-logo">
+            <div class="nav-logo-icon">S</div>
+            Sentinel
+        </a>
+        <div class="nav-links" id="nav-links">
+            <a href="#detector" class="nav-link">Detector</a>
+            <a href="#features" class="nav-link">Features</a>
+            <a href="#pricing" class="nav-link">Pricing</a>
+            <a href="#how-it-works" class="nav-link">How It Works</a>
+        </div>
+        <div class="nav-actions">
+            <button class="btn btn-ghost btn-icon" id="settings-btn" title="Settings (Ctrl+K)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
+            <a href="#detector" class="btn btn-primary">Get Started</a>
+        </div>
+        <div class="mobile-menu-btn" id="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </nav>
 
-    <main>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="#detector" class="mobile-nav-link">Detector</a>
+        <a href="#features" class="mobile-nav-link">Features</a>
+        <a href="#pricing" class="mobile-nav-link">Pricing</a>
+        <a href="#how-it-works" class="mobile-nav-link">How It Works</a>
+        <a href="#" class="mobile-nav-link" id="mobile-settings-link">Settings</a>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
         <!-- Hero Section -->
-        <section class="hero">
-            <span class="hero-label">AI Text Detection</span>
-            <h1>Spot the<br>machine.</h1>
-            <p class="hero-subtitle">Instantly identify AI-generated text with forensic precision. Built for editors, educators, and platforms.</p>
-            
-            <div class="detector-container">
-                <div class="input-wrapper" id="inputWrapper">
-                    <div class="scan-line"></div>
-                    <label>Paste text to analyze</label>
-                    <textarea id="textInput" placeholder="The advancement of artificial intelligence has led to unprecedented capabilities in natural language processing, enabling machines to generate text that is increasingly indistinguishable from human writing..."></textarea>
-                    <div class="typing-indicator" id="typingIndicator">
-                        <span>Analyzing</span>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <div class="hero-badge-dot"></div>
+                    <span>AI Detection Engine v3.0</span>
+                </div>
+                <h1 class="hero-title">
+                    Detect Synthetic<br>
+                    <span class="accent-text">Intelligence</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Advanced neural analysis to identify AI-generated content with surgical precision. 
+                    Built for professionals who demand absolute certainty.
+                </p>
+                <div class="hero-actions">
+                    <a href="#detector" class="btn btn-primary">
+                        Launch Detector
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+                    <a href="#how-it-works" class="btn btn-ghost">Learn More</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="hero-stat-value" data-count="99.7">0</div>
+                        <div class="hero-stat-label">Accuracy %</div>
                     </div>
-                    <div class="input-actions">
-                        <span class="char-count" id="charCount">0 chars</span>
-                        <button class="analyze-btn magnetic" id="analyzeBtn">Analyze</button>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value" data-count="50">0</div>
+                        <div class="hero-stat-label">Million Scans</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value" data-count="12">0</div>
+                        <div class="hero-stat-label">AI Models</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value" data-count="24">0</div>
+                        <div class="hero-stat-label">ms Latency</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- Detector Section -->
+        <section class="detector-section" id="detector">
+            <div class="section-header reveal">
+                <span class="section-label">// Analysis Engine</span>
+                <h2 class="section-title">Real-Time Detection</h2>
+                <p class="section-desc">Paste any text below. Our neural network will analyze linguistic patterns, semantic coherence, and stylistic fingerprints to determine origin.</p>
+            </div>
+            <div class="detector-container reveal">
+                <div class="detector-card">
+                    <div class="detector-header">
+                        <div class="detector-title">Input Stream</div>
+                        <div class="detector-status">
+                            <div class="hero-badge-dot"></div>
+                            <span>System Online</span>
+                        </div>
+                    </div>
+                    <textarea 
+                        class="detector-textarea" 
+                        id="detector-input" 
+                        placeholder="Paste text here for analysis...&#10;&#10;Example: The rapid advancement of artificial intelligence has fundamentally transformed the landscape of content creation, enabling unprecedented levels of efficiency and scale in generating written material across diverse domains and applications."
+                    ></textarea>
+                    <div class="progress-container" id="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span id="progress-status">Initializing neural pathways...</span>
+                            <span id="progress-percent">0%</span>
+                        </div>
+                    </div>
+                    <div class="detector-actions">
+                        <div class="detector-info">
+                            <div class="detector-info-item">
+                                <span class="font-mono text-tertiary">Characters:</span>
+                                <span class="font-mono" id="char-count">0</span>
+                            </div>
+                            <div class="detector-info-item">
+                                <span class="font-mono text-tertiary">Words:</span>
+                                <span class="font-mono" id="word-count">0</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" id="analyze-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                            Analyze Text
+                        </button>
                     </div>
                 </div>
 
-                <div class="result-container" id="resultContainer">
-                    <div class="result-header">
-                        <span class="result-label">Analysis Result</span>
-                        <div class="confidence-score" id="confidenceScore">0%</div>
-                    </div>
-                    <div class="confidence-bar">
-                        <div class="confidence-fill" id="confidenceFill"></div>
-                    </div>
-                    <div class="result-meta">
-                        <div class="meta-item">
-                            <span class="meta-label">Verdict</span>
-                            <span class="meta-value" id="verdict">—</span>
+                <!-- Results Panel -->
+                <div class="results-panel" id="results-panel">
+                    <div class="results-header">
+                        <div class="results-title">Analysis Report</div>
+                        <div class="results-score">
+                            <div class="score-circle" id="score-circle">
+                                <span id="score-value">0%</span>
+                            </div>
+                            <div>
+                                <div class="score-label">AI Probability</div>
+                                <div class="score-value" id="ai-verdict">Analyzing...</div>
+                            </div>
                         </div>
-                        <div class="meta-item">
-                            <span class="meta-label">Model</span>
-                            <span class="meta-value" id="model">—</span>
+                    </div>
+                    <div class="results-breakdown" id="results-breakdown">
+                        <div class="breakdown-item">
+                            <div class="breakdown-label">Perplexity Score</div>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill" id="perplexity-bar" style="background: var(--accent);"></div>
+                            </div>
+                            <div class="breakdown-value" id="perplexity-value">0.0</div>
                         </div>
-                        <div class="meta-item">
-                            <span class="meta-label">Perplexity</span>
-                            <span class="meta-value" id="perplexity">—</span>
+                        <div class="breakdown-item">
+                            <div class="breakdown-label">Burstiness</div>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill" id="burstiness-bar" style="background: var(--accent-secondary);"></div>
+                            </div>
+                            <div class="breakdown-value" id="burstiness-value">0.0</div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-label">Semantic Coherence</div>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill" id="coherence-bar" style="background: var(--success);"></div>
+                            </div>
+                            <div class="breakdown-value" id="coherence-value">0.0</div>
+                        </div>
+                        <div class="breakdown-item">
+                            <div class="breakdown-label">Stylistic Variance</div>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill" id="variance-bar" style="background: var(--warning);"></div>
+                            </div>
+                            <div class="breakdown-value" id="variance-value">0.0</div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Features -->
-        <section class="features" id="features">
+        <div class="section-divider"></div>
+
+        <!-- Features Section -->
+        <section class="section" id="features">
             <div class="section-header reveal">
-                <h2>Precision<br>engineered.</h2>
-                <p>Every feature designed to eliminate noise and deliver definitive answers.</p>
+                <span class="section-label">// Capabilities</span>
+                <h2 class="section-title">Engineered for Precision</h2>
+                <p class="section-desc">Every component optimized for maximum detection accuracy with minimal false positives.</p>
             </div>
-            
             <div class="features-grid">
                 <div class="feature-card reveal">
-                    <span class="feature-number">01</span>
-                    <h3>Perplexity Analysis</h3>
-                    <p>Measures how surprised the model is by each token. Lower perplexity indicates synthetic text with predictable patterns.</p>
+                    <div class="feature-icon">🧠</div>
+                    <h3 class="feature-title">Neural Fingerprinting</h3>
+                    <p class="feature-desc">Identifies unique linguistic signatures left by specific AI models including GPT-4, Claude, Gemini, and Llama with model-specific attribution.</p>
                 </div>
                 <div class="feature-card reveal">
-                    <span class="feature-number">02</span>
-                    <h3>Burstiness Detection</h3>
-                    <p>Identifies unnatural variance in sentence length and complexity—hallmarks of AI-generated prose.</p>
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">Sub-Second Analysis</h3>
+                    <p class="feature-desc">Edge-optimized inference delivers results in under 24 milliseconds. Process thousands of documents in real-time without queue delays.</p>
                 </div>
                 <div class="feature-card reveal">
-                    <span class="feature-number">03</span>
-                    <h3>API Access</h3>
-                    <p>Integrate detection into your pipeline with our REST API. Sub-100ms response times at scale.</p>
+                    <div class="feature-icon">🔒</div>
+                    <h3 class="feature-title">Zero Data Retention</h3>
+                    <p class="feature-desc">All analysis happens in-memory. Your text never touches persistent storage. SOC 2 Type II certified with full GDPR compliance.</p>
                 </div>
                 <div class="feature-card reveal">
-                    <span class="feature-number">04</span>
-                    <h3>Batch Processing</h3>
-                    <p>Analyze thousands of documents simultaneously. Perfect for content platforms and academic integrity systems.</p>
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Confidence Scoring</h3>
+                    <p class="feature-desc">Not just binary results. Get granular probability distributions across multiple dimensions with explainable AI breakdowns.</p>
                 </div>
                 <div class="feature-card reveal">
-                    <span class="feature-number">05</span>
-                    <h3>Model Fingerprinting</h3>
-                    <p>Identifies specific model signatures—GPT-4, Claude, Gemini, Llama—with increasing granularity.</p>
+                    <div class="feature-icon">🔌</div>
+                    <h3 class="feature-title">API-First Architecture</h3>
+                    <p class="feature-desc">REST and GraphQL endpoints with SDKs for Python, Node.js, Go, and Ruby. Webhook support for asynchronous batch processing.</p>
                 </div>
                 <div class="feature-card reveal">
-                    <span class="feature-number">06</span>
-                    <h3>Privacy First</h3>
-                    <p>Zero data retention. Text is analyzed in memory and never stored. SOC 2 Type II certified.</p>
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">Adversarial Resilience</h3>
+                    <p class="feature-desc">Detects humanized, paraphrased, and adversarially modified AI content. Stays ahead of evasion techniques through continuous retraining.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Pricing -->
-        <section class="pricing" id="pricing">
-            <div class="section-header reveal" style="text-align: center; max-width: 600px; margin: 0 auto 4rem;">
-                <h2>Simple pricing.<br>No surprises.</h2>
-                <p>Pay for what you use. Upgrade or downgrade at any time.</p>
+        <div class="section-divider"></div>
+
+        <!-- How It Works -->
+        <section class="section" id="how-it-works">
+            <div class="section-header reveal">
+                <span class="section-label">// Process</span>
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-desc">Four layers of analysis. One definitive answer.</p>
             </div>
-            
+            <div class="steps-container reveal">
+                <div class="step">
+                    <div class="step-number">01</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Ingestion & Tokenization</h3>
+                        <p class="step-desc">Text is parsed into semantic tokens and normalized. Our tokenizer preserves contextual meaning while stripping formatting artifacts that could bias detection.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">02</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Feature Extraction</h3>
+                        <p class="step-desc">We extract 847 distinct linguistic features including perplexity distributions, n-gram patterns, syntactic tree depth, and semantic coherence vectors.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">03</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Neural Classification</h3>
+                        <p class="step-desc">Ensemble of transformer and LSTM models vote on origin probability. Each model specializes in different AI architectures and writing styles.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">04</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Attribution Report</h3>
+                        <p class="step-desc">Final probability is computed with confidence intervals. If AI-generated, we attribute to specific model families with explainable evidence mapping.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- Pricing Section -->
+        <section class="section" id="pricing">
+            <div class="section-header reveal">
+                <span class="section-label">// Pricing</span>
+                <h2 class="section-title">Simple, Transparent Pricing</h2>
+                <p class="section-desc">Start free. Scale as you grow. No hidden fees or usage traps.</p>
+            </div>
             <div class="pricing-grid">
                 <div class="pricing-card reveal">
-                    <div class="plan-name">Starter</div>
-                    <div class="plan-price">$0<span>/mo</span></div>
-                    <ul class="plan-features">
-                        <li>50 scans per month</li>
-                        <li>Basic confidence score</li>
-                        <li>Web interface only</li>
-                        <li>Community support</li>
+                    <div class="pricing-name">Starter</div>
+                    <div class="pricing-desc">For individual researchers and small teams.</div>
+                    <div class="pricing-price"><span>$</span>0</div>
+                    <div class="pricing-period">Forever free</div>
+                    <ul class="pricing-features">
+                        <li class="included">100 scans / month</li>
+                        <li class="included">Basic probability score</li>
+                        <li class="included">Web interface access</li>
+                        <li class="not-included">API access</li>
+                        <li class="not-included">Batch processing</li>
+                        <li class="not-included">Model attribution</li>
                     </ul>
-                    <button class="plan-cta magnetic">Get Started</button>
+                    <button class="btn btn-ghost" style="width: 100%;">Get Started</button>
                 </div>
-                
-                <div class="pricing-card featured reveal">
-                    <div class="plan-name">Pro</div>
-                    <div class="plan-price">$29<span>/mo</span></div>
-                    <ul class="plan-features">
-                        <li>10,000 scans per month</li>
-                        <li>Advanced model detection</li>
-                        <li>API access</li>
-                        <li>Batch processing</li>
-                        <li>Priority support</li>
+                <div class="pricing-card popular reveal">
+                    <div class="pricing-name">Professional</div>
+                    <div class="pricing-desc">For content platforms and agencies.</div>
+                    <div class="pricing-price"><span>$</span>49</div>
+                    <div class="pricing-period">per month</div>
+                    <ul class="pricing-features">
+                        <li class="included">10,000 scans / month</li>
+                        <li class="included">Full breakdown metrics</li>
+                        <li class="included">REST API access</li>
+                        <li class="included">Batch processing</li>
+                        <li class="included">Model attribution</li>
+                        <li class="not-included">Custom model training</li>
                     </ul>
-                    <button class="plan-cta magnetic">Start Trial</button>
+                    <button class="btn btn-primary" style="width: 100%;">Start Trial</button>
                 </div>
-                
                 <div class="pricing-card reveal">
-                    <div class="plan-name">Enterprise</div>
-                    <div class="plan-price">Custom</div>
-                    <ul class="plan-features">
-                        <li>Unlimited scans</li>
-                        <li>Custom model training</li>
-                        <li>Dedicated infrastructure</li>
-                        <li>SSO & audit logs</li>
-                        <li>SLA guarantee</li>
+                    <div class="pricing-name">Enterprise</div>
+                    <div class="pricing-desc">For organizations with custom needs.</div>
+                    <div class="pricing-price"><span>$</span>Custom</div>
+                    <div class="pricing-period">Annual billing</div>
+                    <ul class="pricing-features">
+                        <li class="included">Unlimited scans</li>
+                        <li class="included">GraphQL + Webhooks</li>
+                        <li class="included">SSO & SAML</li>
+                        <li class="included">Custom model training</li>
+                        <li class="included">Dedicated support</li>
+                        <li class="included">SLA guarantee</li>
                     </ul>
-                    <button class="plan-cta magnetic">Contact Sales</button>
+                    <button class="btn btn-ghost" style="width: 100%;">Contact Sales</button>
                 </div>
             </div>
         </section>
 
-        <!-- API Section -->
-        <section class="api-section" id="api">
-            <div class="section-header reveal">
-                <h2>Integrate in<br>seconds.</h2>
-                <p>One endpoint. Zero configuration. Instant results.</p>
-            </div>
-            
-            <div class="code-block reveal">
-                <pre><span class="comment"># Detect AI-generated text</span>
-<span class="token">curl</span> -X POST <span class="string">"https://api.detect.io/v1/analyze"</span> \
-  -H <span class="string">"Authorization: Bearer sk_live_..."</span> \
-  -H <span class="string">"Content-Type: application/json"</span> \
-  -d <span class="string">'{
-    "text": "The quick brown fox...",
-    "model": "auto",
-    "detailed": true
-  }'</span>
+        <div class="section-divider"></div>
 
-<span class="comment"># Response</span>
-{
-  <span class="string">"ai_generated"</span>: <span class="token">true</span>,
-  <span class="string">"confidence"</span>: <span class="token">0.97</span>,
-  <span class="string">"model"</span>: <span class="string">"gpt-4"</span>,
-  <span class="string">"perplexity"</span>: <span class="token">12.4</span>,
-  <span class="string">"burstiness"</span>: <span class="token">0.23</span>
-}</pre>
+        <!-- Testimonials -->
+        <section class="section" id="testimonials">
+            <div class="section-header reveal">
+                <span class="section-label">// Testimonials</span>
+                <h2 class="section-title">Trusted by Industry Leaders</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card reveal">
+                    <p class="testimonial-quote">"Sentinel reduced our content moderation overhead by 78%. The API integration took under two hours and the accuracy is unmatched in the market."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">SM</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Sarah Mitchell</div>
+                            <div class="testimonial-role">CTO, ContentGuard</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card reveal">
+                    <p class="testimonial-quote">"We evaluated six detection platforms. Sentinel was the only one that correctly identified adversarially humanized GPT-4 content at scale."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">DK</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">David Kim</div>
+                            <div class="testimonial-role">Head of AI, EduVerify</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card reveal">
+                    <p class="testimonial-quote">"The zero-retention policy was critical for our legal compliance. Sub-millisecond latency means we can scan every submission in real-time without UX degradation."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">AR</div>
+                        <div class="testimonial-info">
+                            <div class="testimonial-name">Amara Rodriguez</div>
+                            <div class="testimonial-role">VP Engineering, NewsCheck</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
+
     </main>
 
     <!-- Footer -->
-    <footer>
-        <div class="footer-left">
-            <div class="footer-logo">detect_</div>
-            <div class="footer-copy">© 2026 Detect Inc. All rights reserved.</div>
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="#" class="footer-logo">
+                    <div class="nav-logo-icon">S</div>
+                    Sentinel
+                </a>
+                <p class="footer-desc">The most accurate AI text detection platform. Built for security, speed, and scale.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Twitter">𝕏</a>
+                    <a href="#" aria-label="GitHub">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                    <a href="#" aria-label="LinkedIn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>Product</h4>
+                <ul class="footer-links">
+                    <li><a href="#detector">Detector</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#">API Docs</a></li>
+                    <li><a href="#">Changelog</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Company</h4>
+                <ul class="footer-links">
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Legal</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Privacy</a></li>
+                    <li><a href="#">Terms</a></li>
+                    <li><a href="#">Security</a></li>
+                    <li><a href="#">Compliance</a></li>
+                </ul>
+            </div>
         </div>
-        <ul class="footer-links">
-            <li><a href="#" class="magnetic">Privacy</a></li>
-            <li><a href="#" class="magnetic">Terms</a></li>
-            <li><a href="#" class="magnetic">Status</a></li>
-            <li><a href="#" class="magnetic">GitHub</a></li>
-        </ul>
+        <div class="footer-bottom">
+            <div class="footer-copyright">© 2026 Sentinel AI Inc. All rights reserved.</div>
+            <div class="footer-legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
     </footer>
 
-    <!-- Notification -->
-    <div class="notification" id="notification">
-        <span class="notification-title">Analysis Complete</span>
-        <span class="notification-text" id="notificationText">Text identified as AI-generated with 97% confidence.</span>
+    <!-- Settings Panel -->
+    <div class="settings-overlay" id="settings-overlay"></div>
+    <div class="settings-panel" id="settings-panel">
+        <div class="settings-header">
+            <div class="settings-title">Configuration</div>
+            <button class="settings-close" id="settings-close">×</button>
+        </div>
+        <div class="settings-body">
+            <div class="settings-group">
+                <div class="settings-group-title">Theme</div>
+                <div class="theme-options">
+                    <div class="theme-option active" data-theme="dark">
+                        <div class="theme-preview" style="background: #0a0a0f; border-color: #00d4ff;"></div>
+                        <div class="theme-name">Dark</div>
+                    </div>
+                    <div class="theme-option" data-theme="light">
+                        <div class="theme-preview" style="background: #fafafa; border-color: #0066ff;"></div>
+                        <div class="theme-name">Light</div>
+                    </div>
+                    <div class="theme-option" data-theme="matrix">
+                        <div class="theme-preview" style="background: #000; border-color: #00ff41;"></div>
+                        <div class="theme-name">Matrix</div>
+                    </div>
+                    <div class="theme-option" data-theme="midnight">
+                        <div class="theme-preview" style="background: #0f0a1a; border-color: #c084fc;"></div>
+                        <div class="theme-name">Midnight</div>
+                    </div>
+                    <div class="theme-option" data-theme="warm">
+                        <div class="theme-preview" style="background: #1a1510; border-color: #ff9f43;"></div>
+                        <div class="theme-name">Warm</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">Typography</div>
+                <div class="font-options">
+                    <div class="font-option active" data-font="inter">
+                        <div>
+                            <div class="font-sample" style="font-family: 'Inter';">Inter</div>
+                            <div class="font-name">Sans-serif</div>
+                        </div>
+                    </div>
+                    <div class="font-option" data-font="jetbrains">
+                        <div>
+                            <div class="font-sample" style="font-family: 'JetBrains Mono';">JetBrains Mono</div>
+                            <div class="font-name">Monospace</div>
+                        </div>
+                    </div>
+                    <div class="font-option" data-font="space">
+                        <div>
+                            <div class="font-sample" style="font-family: 'Space Grotesk';">Space Grotesk</div>
+                            <div class="font-name">Display</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">Cursor</div>
+                <div class="cursor-options">
+                    <div class="cursor-option active" data-cursor="default">
+                        <div style="font-size: 1.5rem;">●</div>
+                        <div class="cursor-option-name">Default</div>
+                    </div>
+                    <div class="cursor-option" data-cursor="ghost">
+                        <div style="font-size: 1.5rem;">○</div>
+                        <div class="cursor-option-name">Ghost</div>
+                    </div>
+                    <div class="cursor-option" data-cursor="matrix">
+                        <div style="font-size: 1.5rem;">■</div>
+                        <div class="cursor-option-name">Matrix</div>
+                    </div>
+                    <div class="cursor-option" data-cursor="glitch">
+                        <div style="font-size: 1.5rem;">✦</div>
+                        <div class="cursor-option-name">Glitch</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">Performance</div>
+                <div class="slider-control">
+                    <div class="slider-label">
+                        <span>Particle Density</span>
+                        <span id="particle-value">50%</span>
+                    </div>
+                    <input type="range" class="slider-input" id="particle-slider" min="0" max="100" value="50">
+                </div>
+                <div class="slider-control">
+                    <div class="slider-label">
+                        <span>Animation Speed</span>
+                        <span id="speed-value">1.0x</span>
+                    </div>
+                    <input type="range" class="slider-input" id="speed-slider" min="0.1" max="3" step="0.1" value="1">
+                </div>
+                <div class="toggle-control">
+                    <span class="toggle-label">Grain Overlay</span>
+                    <div class="toggle-switch active" id="grain-toggle"></div>
+                </div>
+                <div class="toggle-control">
+                    <span class="toggle-label">3D Background</span>
+                    <div class="toggle-switch active" id="bg-toggle"></div>
+                </div>
+            </div>
+        </div>
+        <div class="settings-footer">
+            <button class="btn btn-ghost" id="settings-reset">Reset Defaults</button>
+            <button class="btn btn-primary" id="settings-save">Save Changes</button>
+        </div>
     </div>
 
     <script>
-        // Custom Cursor System
-        const cursor = document.getElementById('cursor');
-        const trails = [
-            document.getElementById('trail1'),
-            document.getElementById('trail2'),
-            document.getElementById('trail3')
-        ];
-        
+        // ============================================
+        // SENTINEL AI - MAIN APPLICATION
+        // ============================================
+
+        // State Management
+        const State = {
+            theme: localStorage.getItem('sentinel-theme') || 'dark',
+            font: localStorage.getItem('sentinel-font') || 'inter',
+            cursor: localStorage.getItem('sentinel-cursor') || 'default',
+            particleDensity: parseInt(localStorage.getItem('sentinel-particles')) || 50,
+            animationSpeed: parseFloat(localStorage.getItem('sentinel-speed')) || 1,
+            grainEnabled: localStorage.getItem('sentinel-grain') !== 'false',
+            bgEnabled: localStorage.getItem('sentinel-bg') !== 'false',
+            isAnalyzing: false
+        };
+
+        // DOM Elements
+        const DOM = {
+            body: document.body,
+            loadingScreen: document.getElementById('loading-screen'),
+            loadingBar: document.getElementById('loading-bar-fill'),
+            cursorMain: document.getElementById('cursor-main'),
+            cursorRing: document.getElementById('cursor-ring'),
+            cursorTrails: document.getElementById('cursor-trails'),
+            navbar: document.getElementById('navbar'),
+            settingsBtn: document.getElementById('settings-btn'),
+            settingsPanel: document.getElementById('settings-panel'),
+            settingsOverlay: document.getElementById('settings-overlay'),
+            settingsClose: document.getElementById('settings-close'),
+            mobileMenuBtn: document.getElementById('mobile-menu-btn'),
+            mobileMenu: document.getElementById('mobile-menu'),
+            detectorInput: document.getElementById('detector-input'),
+            analyzeBtn: document.getElementById('analyze-btn'),
+            charCount: document.getElementById('char-count'),
+            wordCount: document.getElementById('word-count'),
+            progressContainer: document.getElementById('progress-container'),
+            progressFill: document.getElementById('progress-fill'),
+            progressStatus: document.getElementById('progress-status'),
+            progressPercent: document.getElementById('progress-percent'),
+            resultsPanel: document.getElementById('results-panel'),
+            scoreCircle: document.getElementById('score-circle'),
+            scoreValue: document.getElementById('score-value'),
+            aiVerdict: document.getElementById('ai-verdict')
+        };
+
+        // ============================================
+        // LOADING SEQUENCE
+        // ============================================
+        function simulateLoading() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15 + 5;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        DOM.loadingScreen.classList.add('hidden');
+                        initApp();
+                    }, 400);
+                }
+                DOM.loadingBar.style.width = progress + '%';
+            }, 150);
+        }
+
+        // ============================================
+        // 3D BACKGROUND (Three.js)
+        // ============================================
+        let scene, camera, renderer, particles, geometry, material;
         let mouseX = 0, mouseY = 0;
-        let cursorX = 0, cursorY = 0;
-        let trailPositions = trails.map(() => ({ x: 0, y: 0 }));
+        let targetX = 0, targetY = 0;
 
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-
-        // Magnetic effect for buttons
-        const magneticElements = document.querySelectorAll('.magnetic');
-        magneticElements.forEach(el => {
-            el.addEventListener('mousemove', (e) => {
-                const rect = el.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-                el.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
-            });
+        function initThreeJS() {
+            const container = document.getElementById('canvas-container');
+            const canvas = document.getElementById('bg-canvas');
             
-            el.addEventListener('mouseleave', () => {
-                el.style.transform = 'translate(0, 0)';
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 50;
+
+            renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // Create particles
+            const particleCount = Math.floor((State.particleDensity / 100) * 2000);
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            const colorPalette = getThemeColors();
+
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 100;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
+
+                const color = new THREE.Color(colorPalette[Math.floor(Math.random() * colorPalette.length)]);
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+            }
+
+            geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            material = new THREE.PointsMaterial({
+                size: 0.5,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6,
+                blending: THREE.AdditiveBlending
             });
-        });
 
-        // Cursor hover states
-        const hoverElements = document.querySelectorAll('a, button, .input-wrapper');
-        hoverElements.forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-        });
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
 
-        // Smooth cursor animation
+            // Add floating geometric shapes
+            const shapes = [];
+            const shapeGeometries = [
+                new THREE.TorusKnotGeometry(3, 1, 100, 16),
+                new THREE.IcosahedronGeometry(4, 0),
+                new THREE.OctahedronGeometry(3, 0)
+            ];
+
+            shapeGeometries.forEach((geom, i) => {
+                const shapeMaterial = new THREE.MeshBasicMaterial({
+                    color: colorPalette[i % colorPalette.length],
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.15
+                });
+                const mesh = new THREE.Mesh(geom, shapeMaterial);
+                mesh.position.set(
+                    (Math.random() - 0.5) * 60,
+                    (Math.random() - 0.5) * 60,
+                    (Math.random() - 0.5) * 40
+                );
+                mesh.userData = {
+                    rotSpeed: (Math.random() - 0.5) * 0.01,
+                    floatSpeed: Math.random() * 0.5 + 0.5,
+                    floatOffset: Math.random() * Math.PI * 2
+                };
+                shapes.push(mesh);
+                scene.add(mesh);
+            });
+
+            particles.userData = { shapes };
+
+            animate();
+        }
+
+        function getThemeColors() {
+            const theme = State.theme;
+            const palettes = {
+                dark: ['#00d4ff', '#7c3aed', '#10b981', '#f59e0b'],
+                light: ['#0066ff', '#7c3aed', '#10b981', '#f59e0b'],
+                matrix: ['#00ff41', '#00cc33', '#00aa22', '#008811'],
+                midnight: ['#c084fc', '#a855f7', '#7c3aed', '#6d28d9'],
+                warm: ['#ff9f43', '#ee5a24', '#feca57', '#ff6b6b']
+            };
+            return palettes[theme] || palettes.dark;
+        }
+
+        function animate() {
+            if (!State.bgEnabled) return;
+            requestAnimationFrame(animate);
+
+            const time = Date.now() * 0.001 * State.animationSpeed;
+
+            // Smooth mouse follow
+            targetX += (mouseX - targetX) * 0.05;
+            targetY += (mouseY - targetY) * 0.05;
+
+            if (particles) {
+                particles.rotation.x += 0.0003 * State.animationSpeed;
+                particles.rotation.y += 0.0005 * State.animationSpeed;
+                particles.rotation.x += targetY * 0.0001;
+                particles.rotation.y += targetX * 0.0001;
+            }
+
+            // Animate shapes
+            if (particles && particles.userData.shapes) {
+                particles.userData.shapes.forEach(shape => {
+                    shape.rotation.x += shape.userData.rotSpeed * State.animationSpeed;
+                    shape.rotation.y += shape.userData.rotSpeed * State.animationSpeed;
+                    shape.position.y += Math.sin(time + shape.userData.floatOffset) * 0.02 * State.animationSpeed;
+                });
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        function updateThreeJSTheme() {
+            if (!geometry) return;
+            const colors = geometry.attributes.color.array;
+            const colorPalette = getThemeColors();
+            
+            for (let i = 0; i < colors.length / 3; i++) {
+                const color = new THREE.Color(colorPalette[Math.floor(Math.random() * colorPalette.length)]);
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+            }
+            geometry.attributes.color.needsUpdate = true;
+
+            if (particles && particles.userData.shapes) {
+                particles.userData.shapes.forEach((shape, i) => {
+                    shape.material.color.set(colorPalette[i % colorPalette.length]);
+                });
+            }
+        }
+
+        function updateParticleCount() {
+            if (!scene) return;
+            scene.remove(particles);
+            if (particles.userData.shapes) {
+                particles.userData.shapes.forEach(s => scene.remove(s));
+            }
+            initThreeJS();
+        }
+
+        // ============================================
+        // CUSTOM CURSOR
+        // ============================================
+        const trailPositions = [];
+        const maxTrails = 12;
+
+        function initCursor() {
+            // Check if touch device
+            if (window.matchMedia('(pointer: coarse)').matches) return;
+
+            for (let i = 0; i < maxTrails; i++) {
+                const trail = document.createElement('div');
+                trail.className = 'cursor-trail';
+                trail.style.width = (8 - i * 0.5) + 'px';
+                trail.style.height = (8 - i * 0.5) + 'px';
+                trail.style.opacity = (0.3 - i * 0.02);
+                DOM.cursorTrails.appendChild(trail);
+                trailPositions.push({ x: 0, y: 0, el: trail });
+            }
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX - window.innerWidth / 2) * 0.5;
+                mouseY = (e.clientY - window.innerHeight / 2) * 0.5;
+
+                DOM.cursorMain.style.left = e.clientX + 'px';
+                DOM.cursorMain.style.top = e.clientY + 'px';
+                DOM.cursorRing.style.left = e.clientX + 'px';
+                DOM.cursorRing.style.top = e.clientY + 'px';
+
+                // Update trail target
+                trailPositions[0].x = e.clientX;
+                trailPositions[0].y = e.clientY;
+            });
+
+            document.addEventListener('mousedown', () => {
+                DOM.cursorMain.classList.add('clicking');
+            });
+
+            document.addEventListener('mouseup', () => {
+                DOM.cursorMain.classList.remove('clicking');
+            });
+
+            // Magnetic effect for buttons
+            const magneticElements = document.querySelectorAll('.btn, .nav-logo, .feature-card, .testimonial-card');
+            magneticElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    DOM.cursorMain.classList.add('hovering');
+                    DOM.cursorRing.classList.add('hovering');
+                });
+                el.addEventListener('mouseleave', () => {
+                    DOM.cursorMain.classList.remove('hovering');
+                    DOM.cursorRing.classList.remove('hovering');
+                });
+            });
+
+            animateCursor();
+        }
+
         function animateCursor() {
-            const dx = mouseX - cursorX;
-            const dy = mouseY - cursorY;
+            if (window.matchMedia('(pointer: coarse)').matches) return;
             
-            cursorX += dx * 0.15;
-            cursorY += dy * 0.15;
-            
-            cursor.style.left = cursorX + 'px';
-            cursor.style.top = cursorY + 'px';
-
-            // Trail effect
-            trails.forEach((trail, i) => {
-                const targetX = i === 0 ? cursorX : trailPositions[i - 1].x;
-                const targetY = i === 0 ? cursorY : trailPositions[i - 1].y;
-                
-                trailPositions[i].x += (targetX - trailPositions[i].x) * (0.1 - i * 0.02);
-                trailPositions[i].y += (targetY - trailPositions[i].y) * (0.1 - i * 0.02);
-                
-                trail.style.left = trailPositions[i].x + 'px';
-                trail.style.top = trailPositions[i].y + 'px';
-                trail.style.opacity = 0.3 - (i * 0.08);
-            });
-
+            for (let i = trailPositions.length - 1; i > 0; i--) {
+                trailPositions[i].x += (trailPositions[i - 1].x - trailPositions[i].x) * 0.35;
+                trailPositions[i].y += (trailPositions[i - 1].y - trailPositions[i].y) * 0.35;
+                trailPositions[i].el.style.left = trailPositions[i].x + 'px';
+                trailPositions[i].el.style.top = trailPositions[i].y + 'px';
+            }
             requestAnimationFrame(animateCursor);
         }
-        animateCursor();
 
-        // 3D Canvas Background
-        const canvas = document.getElementById('bgCanvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let particles = [];
-        const particleCount = 60;
-
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        class Particle {
-            constructor() {
-                this.reset();
-            }
-
-            reset() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.z = Math.random() * 1000;
-                this.size = Math.random() * 2 + 0.5;
-                this.speed = Math.random() * 0.5 + 0.1;
-                this.opacity = Math.random() * 0.5 + 0.1;
-            }
-
-            update() {
-                this.z -= this.speed;
-                if (this.z <= 0) this.reset();
-            }
-
-            draw() {
-                const scale = 1000 / (1000 + this.z);
-                const x2d = (this.x - width / 2) * scale + width / 2;
-                const y2d = (this.y - height / 2) * scale + height / 2;
-                const size = this.size * scale;
-                
-                const theme = document.documentElement.getAttribute('data-theme');
-                let color;
-                if (theme === 'void') color = '0, 255, 65';
-                else if (theme === 'sage') color = '143, 188, 143';
-                else if (theme === 'alabaster') color = '0, 0, 0';
-                else color = '255, 255, 255';
-                
-                ctx.beginPath();
-                ctx.arc(x2d, y2d, size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${color}, ${this.opacity * scale})`;
-                ctx.fill();
-            }
-        }
-
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
-
-        function animateCanvas() {
-            ctx.clearRect(0, 0, width, height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-            requestAnimationFrame(animateCanvas);
-        }
-        animateCanvas();
-
-        // Theme Switching
-        const themeDots = document.querySelectorAll('.theme-dot');
-        const html = document.documentElement;
-
-        themeDots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                const theme = dot.getAttribute('data-theme');
-                html.setAttribute('data-theme', theme);
-                
-                themeDots.forEach(d => d.classList.remove('active'));
-                dot.classList.add('active');
-                
-                localStorage.setItem('theme', theme);
-            });
-        });
-
-        // Load saved theme
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            html.setAttribute('data-theme', savedTheme);
-            themeDots.forEach(d => {
-                d.classList.toggle('active', d.getAttribute('data-theme') === savedTheme);
+        // ============================================
+        // THEME SYSTEM
+        // ============================================
+        function setTheme(theme) {
+            State.theme = theme;
+            DOM.body.setAttribute('data-theme', theme);
+            localStorage.setItem('sentinel-theme', theme);
+            updateThreeJSTheme();
+            
+            document.querySelectorAll('.theme-option').forEach(opt => {
+                opt.classList.toggle('active', opt.dataset.theme === theme);
             });
         }
 
-        // Text Input & Analysis
-        const textInput = document.getElementById('textInput');
-        const charCount = document.getElementById('charCount');
-        const analyzeBtn = document.getElementById('analyzeBtn');
-        const inputWrapper = document.getElementById('inputWrapper');
-        const resultContainer = document.getElementById('resultContainer');
-        const confidenceScore = document.getElementById('confidenceScore');
-        const confidenceFill = document.getElementById('confidenceFill');
-        const verdict = document.getElementById('verdict');
-        const model = document.getElementById('model');
-        const perplexity = document.getElementById('perplexity');
-        const typingIndicator = document.getElementById('typingIndicator');
-        const notification = document.getElementById('notification');
-        const notificationText = document.getElementById('notificationText');
+        function setFont(font) {
+            State.font = font;
+            localStorage.setItem('sentinel-font', font);
+            
+            const fontMap = {
+                inter: { primary: 'Inter', mono: 'JetBrains Mono', display: 'Space Grotesk' },
+                jetbrains: { primary: 'JetBrains Mono', mono: 'JetBrains Mono', display: 'JetBrains Mono' },
+                space: { primary: 'Space Grotesk', mono: 'JetBrains Mono', display: 'Space Grotesk' }
+            };
+            
+            const selected = fontMap[font];
+            document.documentElement.style.setProperty('--font-primary', selected.primary + ', sans-serif');
+            document.documentElement.style.setProperty('--font-display', selected.display + ', sans-serif');
+            
+            document.querySelectorAll('.font-option').forEach(opt => {
+                opt.classList.toggle('active', opt.dataset.font === font);
+            });
+        }
 
-        textInput.addEventListener('input', () => {
-            const len = textInput.value.length;
-            charCount.textContent = `${len} char${len !== 1 ? 's' : ''}`;
-        });
+        function setCursor(cursor) {
+            State.cursor = cursor;
+            DOM.body.setAttribute('data-cursor', cursor);
+            localStorage.setItem('sentinel-cursor', cursor);
+            
+            document.querySelectorAll('.cursor-option').forEach(opt => {
+                opt.classList.toggle('active', opt.dataset.cursor === cursor);
+            });
+        }
 
-        // Mock AI Detection
-        analyzeBtn.addEventListener('click', async () => {
-            const text = textInput.value.trim();
-            if (!text || text.length < 20) {
-                showNotification('Error', 'Please enter at least 20 characters for analysis.');
+        // ============================================
+        // SETTINGS PANEL
+        // ============================================
+        function openSettings() {
+            DOM.settingsPanel.classList.add('active');
+            DOM.settingsOverlay.classList.add('active');
+            DOM.body.style.overflow = 'hidden';
+        }
+
+        function closeSettings() {
+            DOM.settingsPanel.classList.remove('active');
+            DOM.settingsOverlay.classList.remove('active');
+            DOM.body.style.overflow = '';
+        }
+
+        function initSettings() {
+            // Theme options
+            document.querySelectorAll('.theme-option').forEach(opt => {
+                opt.addEventListener('click', () => setTheme(opt.dataset.theme));
+            });
+
+            // Font options
+            document.querySelectorAll('.font-option').forEach(opt => {
+                opt.addEventListener('click', () => setFont(opt.dataset.font));
+            });
+
+            // Cursor options
+            document.querySelectorAll('.cursor-option').forEach(opt => {
+                opt.addEventListener('click', () => setCursor(opt.dataset.cursor));
+            });
+
+            // Particle slider
+            const particleSlider = document.getElementById('particle-slider');
+            const particleValue = document.getElementById('particle-value');
+            particleSlider.addEventListener('input', (e) => {
+                State.particleDensity = parseInt(e.target.value);
+                particleValue.textContent = State.particleDensity + '%';
+            });
+            particleSlider.addEventListener('change', () => {
+                localStorage.setItem('sentinel-particles', State.particleDensity);
+                updateParticleCount();
+            });
+
+            // Speed slider
+            const speedSlider = document.getElementById('speed-slider');
+            const speedValue = document.getElementById('speed-value');
+            speedSlider.addEventListener('input', (e) => {
+                State.animationSpeed = parseFloat(e.target.value);
+                speedValue.textContent = State.animationSpeed.toFixed(1) + 'x';
+            });
+            speedSlider.addEventListener('change', () => {
+                localStorage.setItem('sentinel-speed', State.animationSpeed);
+            });
+
+            // Toggles
+            const grainToggle = document.getElementById('grain-toggle');
+            grainToggle.addEventListener('click', () => {
+                grainToggle.classList.toggle('active');
+                State.grainEnabled = grainToggle.classList.contains('active');
+                localStorage.setItem('sentinel-grain', State.grainEnabled);
+                document.querySelector('.grain-overlay').style.display = State.grainEnabled ? 'block' : 'none';
+            });
+
+            const bgToggle = document.getElementById('bg-toggle');
+            bgToggle.addEventListener('click', () => {
+                bgToggle.classList.toggle('active');
+                State.bgEnabled = bgToggle.classList.contains('active');
+                localStorage.setItem('sentinel-bg', State.bgEnabled);
+                document.getElementById('canvas-container').style.display = State.bgEnabled ? 'block' : 'none';
+            });
+
+            // Reset
+            document.getElementById('settings-reset').addEventListener('click', () => {
+                setTheme('dark');
+                setFont('inter');
+                setCursor('default');
+                particleSlider.value = 50;
+                particleValue.textContent = '50%';
+                State.particleDensity = 50;
+                speedSlider.value = 1;
+                speedValue.textContent = '1.0x';
+                State.animationSpeed = 1;
+                grainToggle.classList.add('active');
+                State.grainEnabled = true;
+                bgToggle.classList.add('active');
+                State.bgEnabled = true;
+                document.querySelector('.grain-overlay').style.display = 'block';
+                document.getElementById('canvas-container').style.display = 'block';
+                updateParticleCount();
+                localStorage.clear();
+            });
+
+            // Save
+            document.getElementById('settings-save').addEventListener('click', closeSettings);
+
+            // Event listeners
+            DOM.settingsBtn.addEventListener('click', openSettings);
+            DOM.settingsClose.addEventListener('click', closeSettings);
+            DOM.settingsOverlay.addEventListener('click', closeSettings);
+            document.getElementById('mobile-settings-link').addEventListener('click', (e) => {
+                e.preventDefault();
+                closeMobileMenu();
+                openSettings();
+            });
+
+            // Keyboard shortcut
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'k') {
+                    e.preventDefault();
+                    DOM.settingsPanel.classList.contains('active') ? closeSettings() : openSettings();
+                }
+                if (e.key === 'Escape') {
+                    closeSettings();
+                    closeMobileMenu();
+                }
+            });
+        }
+
+        // ============================================
+        // MOBILE MENU
+        // ============================================
+        function toggleMobileMenu() {
+            DOM.mobileMenuBtn.classList.toggle('active');
+            DOM.mobileMenu.classList.toggle('active');
+        }
+
+        function closeMobileMenu() {
+            DOM.mobileMenuBtn.classList.remove('active');
+            DOM.mobileMenu.classList.remove('active');
+        }
+
+        // ============================================
+        // DETECTOR FUNCTIONALITY
+        // ============================================
+        function initDetector() {
+            DOM.detectorInput.addEventListener('input', updateCounts);
+            DOM.analyzeBtn.addEventListener('click', analyzeText);
+        }
+
+        function updateCounts() {
+            const text = DOM.detectorInput.value;
+            DOM.charCount.textContent = text.length;
+            DOM.wordCount.textContent = text.trim() ? text.trim().split(/\s+/).length : 0;
+        }
+
+        function analyzeText() {
+            if (State.isAnalyzing) return;
+            const text = DOM.detectorInput.value.trim();
+            if (!text) {
+                DOM.detectorInput.focus();
+                DOM.detectorInput.style.borderColor = 'var(--danger)';
+                setTimeout(() => {
+                    DOM.detectorInput.style.borderColor = '';
+                }, 1000);
                 return;
             }
 
-            analyzeBtn.classList.add('processing');
-            analyzeBtn.innerHTML = '<div class="loader"><span></span><span></span><span></span></div>';
-            inputWrapper.classList.add('scanning');
-            typingIndicator.classList.add('active');
-            resultContainer.classList.remove('visible');
+            State.isAnalyzing = true;
+            DOM.analyzeBtn.disabled = true;
+            DOM.analyzeBtn.innerHTML = '<span class="font-mono">Processing...</span>';
+            DOM.resultsPanel.classList.remove('active');
+            DOM.progressContainer.classList.add('active');
 
-            // Simulate processing delay
-            await new Promise(r => setTimeout(r, 2000));
+            const stages = [
+                { status: 'Tokenizing input stream...', progress: 15 },
+                { status: 'Extracting linguistic features...', progress: 35 },
+                { status: 'Running neural classification...', progress: 60 },
+                { status: 'Computing perplexity distributions...', progress: 80 },
+                { status: 'Generating attribution report...', progress: 100 }
+            ];
 
-            // Generate realistic mock results
-            const hasAiPatterns = /artificial intelligence|advancement|natural language|processing|capabilities|enabling|increasingly|sophisticated|leverage|utilize|delve|multifaceted|realm|landscape|tapestry|journey|embark|navigate|enhance|facilitate|optimize|streamline|robust|seamless|comprehensive|holistic|innovative|cutting-edge|state-of-the-art|groundbreaking|pivotal|paramount|crucial|imperative|underscore|highlight|emphasize|foster|cultivate|nurture|pave|chart|blueprint|framework|ecosystem|paradigm|synergy|convergence|intersection|nexus|juxtaposition|dichotomy|spectrum|gamut|myriad|plethora|abundance|dearth|paucity|quintessential|archetypal|exemplary|quandary|dilemma|predicament|conundrum|nuance|subtlety|gradation|inflection|iteration|incarnation|manifestation|embodiment|personification|epitome|quintessence|apotheosis|zenith|pinnacle|acme|culmination|consummation|fruition|realization|actuation|effectuation/i.test(text);
-            
-            const confidence = hasAiPatterns ? 
-                Math.floor(Math.random() * 15) + 82 : 
-                Math.floor(Math.random() * 30) + 10;
-            
-            const isAi = confidence > 50;
-            const models = ['GPT-4', 'Claude 3', 'Gemini Pro', 'Llama 3', 'Human'];
-            const detectedModel = isAi ? models[Math.floor(Math.random() * 4)] : 'Human';
-            const perp = isAi ? (Math.random() * 20 + 5).toFixed(1) : (Math.random() * 80 + 40).toFixed(1);
-
-            // Animate results
-            resultContainer.classList.add('visible');
-            inputWrapper.classList.remove('scanning');
-            typingIndicator.classList.remove('active');
-            
-            // Counter animation
-            let current = 0;
-            const increment = confidence / 40;
-            const counter = setInterval(() => {
-                current += increment;
-                if (current >= confidence) {
-                    current = confidence;
-                    clearInterval(counter);
+            let currentStage = 0;
+            const stageInterval = setInterval(() => {
+                if (currentStage >= stages.length) {
+                    clearInterval(stageInterval);
+                    showResults(text);
+                    return;
                 }
-                confidenceScore.textContent = Math.floor(current) + '%';
-            }, 30);
-
-            setTimeout(() => {
-                confidenceFill.style.width = confidence + '%';
-            }, 100);
-
-            verdict.textContent = isAi ? 'AI Generated' : 'Human Written';
-            verdict.style.color = isAi ? 'var(--accent)' : 'var(--text-muted)';
-            model.textContent = detectedModel;
-            perplexity.textContent = perp;
-
-            analyzeBtn.classList.remove('processing');
-            analyzeBtn.textContent = 'Analyze';
-            
-            showNotification(
-                'Analysis Complete', 
-                `Text identified as ${isAi ? 'AI-generated' : 'human-written'} with ${confidence}% confidence.`
-            );
-        });
-
-        function showNotification(title, text) {
-            notification.querySelector('.notification-title').textContent = title;
-            notificationText.textContent = text;
-            notification.classList.add('show');
-            setTimeout(() => notification.classList.remove('show'), 4000);
+                const stage = stages[currentStage];
+                DOM.progressFill.style.width = stage.progress + '%';
+                DOM.progressStatus.textContent = stage.status;
+                DOM.progressPercent.textContent = stage.progress + '%';
+                currentStage++;
+            }, 600);
         }
 
-        // Scroll Reveal
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+        function showResults(text) {
+            // Simulate analysis based on text characteristics
+            const wordCount = text.trim().split(/\s+/).length;
+            const avgWordLength = text.length / wordCount;
+            const punctuationDensity = (text.match(/[.,;:!?]/g) || []).length / text.length;
+            
+            // Simple heuristic for demo (in real app, this would be ML inference)
+            let aiProbability = 0;
+            if (avgWordLength > 5.5 && punctuationDensity < 0.05) {
+                aiProbability = Math.random() * 30 + 60; // Likely AI
+            } else if (avgWordLength < 4.5) {
+                aiProbability = Math.random() * 20; // Likely human
+            } else {
+                aiProbability = Math.random() * 40 + 30; // Uncertain
+            }
+            
+            aiProbability = Math.min(99, Math.max(1, aiProbability));
+            
+            const perplexity = (Math.random() * 50 + 20).toFixed(1);
+            const burstiness = (Math.random() * 100).toFixed(1);
+            const coherence = (Math.random() * 30 + 70).toFixed(1);
+            const variance = (Math.random() * 100).toFixed(1);
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+            DOM.progressContainer.classList.remove('active');
+            DOM.resultsPanel.classList.add('active');
+
+            // Animate score
+            let currentScore = 0;
+            const scoreInterval = setInterval(() => {
+                currentScore += 2;
+                if (currentScore >= aiProbability) {
+                    currentScore = aiProbability;
+                    clearInterval(scoreInterval);
                 }
-            });
-        }, observerOptions);
+                DOM.scoreValue.textContent = Math.round(currentScore) + '%';
+                
+                const rotation = -90 + (currentScore / 100) * 360;
+                DOM.scoreCircle.style.setProperty('--rotation', rotation + 'deg');
+                DOM.scoreCircle.querySelector('::before') && (DOM.scoreCircle.style.cssText = DOM.scoreCircle.style.cssText);
+            }, 20);
 
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+            // Set verdict
+            const verdict = aiProbability > 70 ? 'AI Generated' : aiProbability > 40 ? 'Mixed Origin' : 'Human Written';
+            const verdictColor = aiProbability > 70 ? 'var(--danger)' : aiProbability > 40 ? 'var(--warning)' : 'var(--success)';
+            DOM.aiVerdict.textContent = verdict;
+            DOM.aiVerdict.style.color = verdictColor;
 
-        // Smooth scroll for nav links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Animate bars
+            setTimeout(() => {
+                document.getElementById('perplexity-bar').style.width = perplexity + '%';
+                document.getElementById('perplexity-value').textContent = perplexity;
+                
+                document.getElementById('burstiness-bar').style.width = burstiness + '%';
+                document.getElementById('burstiness-value').textContent = burstiness;
+                
+                document.getElementById('coherence-bar').style.width = coherence + '%';
+                document.getElementById('coherence-value').textContent = coherence;
+                
+                document.getElementById('variance-bar').style.width = variance + '%';
+                document.getElementById('variance-value').textContent = variance;
+            }, 300);
+
+            // Reset button
+            State.isAnalyzing = false;
+            DOM.analyzeBtn.disabled = false;
+            DOM.analyzeBtn.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+                Analyze Text
+            `;
+        }
+
+        // ============================================
+        // SCROLL ANIMATIONS
+        // ============================================
+        function initScrollAnimations() {
+            // Navbar scroll effect
+            let lastScroll = 0;
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.pageYOffset;
+                if (currentScroll > 100) {
+                    DOM.navbar.classList.add('scrolled');
+                } else {
+                    DOM.navbar.classList.remove('scrolled');
                 }
+                lastScroll = currentScroll;
             });
-        });
 
-        // Parallax effect on scroll
-        let scrollY = 0;
-        window.addEventListener('scroll', () => {
-            scrollY = window.scrollY;
-            const shapes = document.querySelectorAll('.shape');
-            shapes.forEach((shape, i) => {
-                const speed = (i + 1) * 0.2;
-                shape.style.transform = `translateY(${scrollY * speed}px)`;
+            // Reveal animations
+            const reveals = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+            reveals.forEach(el => observer.observe(el));
+
+            // Counter animation for stats
+            const statValues = document.querySelectorAll('.hero-stat-value[data-count]');
+            const statObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = parseFloat(entry.target.dataset.count);
+                        const isDecimal = target % 1 !== 0;
+                        let current = 0;
+                        const increment = target / 60;
+                        const counter = setInterval(() => {
+                            current += increment;
+                            if (current >= target) {
+                                current = target;
+                                clearInterval(counter);
+                            }
+                            entry.target.textContent = isDecimal ? current.toFixed(1) : Math.round(current);
+                        }, 25);
+                        statObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            statValues.forEach(el => statObserver.observe(el));
+        }
+
+        // ============================================
+        // SMOOTH SCROLL
+        // ============================================
+        function initSmoothScroll() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        closeMobileMenu();
+                    }
+                });
             });
-        });
+        }
 
-        // Button click handlers for pricing
-        document.querySelectorAll('.plan-cta').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const plan = btn.closest('.pricing-card').querySelector('.plan-name').textContent;
-                showNotification('Coming Soon', `${plan} plan will be available shortly. Join the waitlist.`);
-            });
-        });
-
-        // Keyboard shortcut
-        document.addEventListener('keydown', (e) => {
-            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-                analyzeBtn.click();
+        // ============================================
+        // WINDOW RESIZE
+        // ============================================
+        window.addEventListener('resize', () => {
+            if (camera && renderer) {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
             }
         });
 
-        // Initial focus
-        window.addEventListener('load', () => {
-            setTimeout(() => textInput.focus(), 1000);
-        });
+        // ============================================
+        // APP INITIALIZATION
+        // ============================================
+        function initApp() {
+            // Apply saved state
+            setTheme(State.theme);
+            setFont(State.font);
+            setCursor(State.cursor);
+            
+            document.getElementById('particle-slider').value = State.particleDensity;
+            document.getElementById('particle-value').textContent = State.particleDensity + '%';
+            document.getElementById('speed-slider').value = State.animationSpeed;
+            document.getElementById('speed-value').textContent = State.animationSpeed.toFixed(1) + 'x';
+            
+            if (!State.grainEnabled) {
+                document.getElementById('grain-toggle').classList.remove('active');
+                document.querySelector('.grain-overlay').style.display = 'none';
+            }
+            if (!State.bgEnabled) {
+                document.getElementById('bg-toggle').classList.remove('active');
+                document.getElementById('canvas-container').style.display = 'none';
+            }
+
+            // Initialize systems
+            initThreeJS();
+            initCursor();
+            initSettings();
+            initDetector();
+            initScrollAnimations();
+            initSmoothScroll();
+
+            // Mobile menu
+            DOM.mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.addEventListener('click', closeMobileMenu);
+            });
+
+            // GSAP ScrollTrigger animations
+            if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+                gsap.registerPlugin(ScrollTrigger);
+                
+                gsap.from('.hero-badge', { opacity: 0, y: 20, duration: 1, delay: 0.2, ease: 'power3.out' });
+                gsap.from('.hero-title', { opacity: 0, y: 40, duration: 1, delay: 0.4, ease: 'power3.out' });
+                gsap.from('.hero-subtitle', { opacity: 0, y: 30, duration: 1, delay: 0.6, ease: 'power3.out' });
+                gsap.from('.hero-actions', { opacity: 0, y: 20, duration: 1, delay: 0.8, ease: 'power3.out' });
+                gsap.from('.hero-stats', { opacity: 0, y: 30, duration: 1, delay: 1, ease: 'power3.out' });
+            }
+        }
+
+        // Start loading
+        simulateLoading();
     </script>
 </body>
-</html>
+</html>'''
+
+# Write to file
+with open('/mnt/agents/output/sentinel_ai_detector.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+print("File saved successfully!")
+print(f"File size: {len(html_content):,} characters")
+print(f"Lines of code: {html_content.count(chr(10)):,}")
